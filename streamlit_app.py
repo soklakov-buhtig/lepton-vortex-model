@@ -41,8 +41,7 @@ with col1:
     fig.update_layout(
         xaxis=dict(range=list((0, 10)), constrain="domain"),
         yaxis=dict(scaleanchor="x", scaleratio=1, range=list((-5, 5)), constrain="domain"),
-        yaxis=dict(scaleanchor="x", scaleratio=1, range=[-5, 5]),
-        xaxis=dict(range=),
+
         height=520,
     )
 
