@@ -1,3 +1,4 @@
+import numpy as np
 import streamlit as st
 import plotly.graph_objects as go
 import constants as const
@@ -45,46 +46,116 @@ def make_vortex_figure(R, Z, psi, r_c_fm, colorscale="Viridis"):
         )
     )
     fig.update_layout(
-        xaxis_title="Radial coordinate r [fm]",
-        yaxis_title="Axial coordinate z [fm]",
+        xaxis_title="Radial r [fm]",
+        yaxis_title="Axial z [fm]",
         xaxis=dict(range=list((0, r_max)), constrain="domain"),
         yaxis=dict(scaleanchor="x", scaleratio=1, range=list((-z_max, z_max)), constrain="domain"),
         height=400,
-        margin=dict(l=20, r=20, t=20, b=20),
+        margin=dict(l=10, r=10, t=10, b=10),
     )
     return fig
 
 
-# --- Top Plot: Electron ---
+def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe"):
+    # Transparent reference torus surface
+    u = np.linspace(0, 2 * np.pi, 48)
+    v = np.linspace(0, 2 * np.pi, 28)
+    U, V = np.meshgrid(u, v)
+    X_tor = (R0 + sigma * np.cos(V)) * np.cos(U)
+    Y_tor = (R0 + sigma * np.cos(V)) * np.sin(U)
+    Z_tor = sigma * np.sin(V)
+
+    # Helical vortex filament winding (m_tor, n_pol)
+    t = np.linspace(0, 2 * np.pi, 1200)
+    phi = m_tor * t
+    theta = n_pol * t
+    x_line = (R0 + sigma * np.cos(theta)) * np.cos(phi)
+    y_line = (R0 + sigma * np.cos(theta)) * np.sin(phi)
+    z_line = sigma * np.sin(theta)
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Surface(
+            x=X_tor,
+            y=Y_tor,
+            z=Z_tor,
+            opacity=0.18,
+            showscale=False,
+            colorscale="Greys",
+            name="Core Shell",
+        )
+    )
+    fig.add_trace(
+        go.Scatter3d(
+            x=x_line,
+            y=y_line,
+            z=z_line,
+            mode="lines",
+            line=dict(color=line_color, width=5),
+            name=f"Helix ({m_tor},{n_pol})",
+        )
+    )
+    lim = R0 + 1.5 * sigma
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(range=list((-lim, lim)), title="X [fm]"),
+            yaxis=dict(range=list((-lim, lim)), title="Y [fm]"),
+            zaxis=dict(range=list((-lim, lim)), title="Z [fm]"),
+            aspectmode="cube",
+        ),
+        height=400,
+        margin=dict(l=0, r=0, t=10, b=10),
+        showlegend=False,
+    )
+    return fig
+
+
+# --- Top Row: Electron ---
 R_e, Z_e, psi_e, meta_e = solver.get_lepton_ansatz(
     "electron", m_tor=m_tor_e, n_pol=n_pol_e, alpha_nl=alpha_nl
 )
 st.subheader(f"1. Electron Vortex Core — Mode ({m_tor_e}, {n_pol_e}) [R_Compton = {meta_e['R_compton_fm']:.2f} fm]")
-col_e1, col_e2 = st.columns([2, 1])
+col_e1, col_e2, col_e3 = st.columns([1.15, 1.15, 0.8])
 with col_e1:
     st.plotly_chart(make_vortex_figure(R_e, Z_e, psi_e, meta_e["R_compton_fm"], "Viridis"), use_container_width=True)
 with col_e2:
-    st.markdown("**Electron Geometric Anchors (`constants.py`):**")
+    if st.toggle("Render 3D Electron Helix", key="render_3d_e"):
+        st.plotly_chart(
+            make_3d_helical_torus(meta_e["R0_fm"], meta_e["sigma_fm"], m_tor_e, n_pol_e, "#00f2fe"),
+            use_container_width=True,
+        )
+    else:
+        st.info("3D rendering paused to save resources. Toggle switch above to inspect the helical-toroidal core.")
+with col_e3:
+    st.markdown("**Electron Anchors (`constants.py`):**")
     st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_e}, {n_pol_e})`")
     st.write(f"- Rest mass: `{const.M_ELECTRON_MEV:.6f} MeV`")
-    st.write(f"- Major torus radius $R_0$: `{meta_e['R0_fm']:.2f} fm`")
-    st.write(f"- Core tube width $\\sigma$: `{meta_e['sigma_fm']:.2f} fm`")
+    st.write(f"- Major radius $R_0$: `{meta_e['R0_fm']:.2f} fm`")
+    st.write(f"- Tube width $\\sigma$: `{meta_e['sigma_fm']:.2f} fm`")
     st.write(f"- Classical radius $r_e$: `{const.R_CLASSICAL_E * 1e15:.3f} fm`")
 
 st.divider()
 
-# --- Bottom Plot: Muon ---
+# --- Bottom Row: Muon ---
 R_mu, Z_mu, psi_mu, meta_mu = solver.get_lepton_ansatz(
     "muon", m_tor=m_tor_mu, n_pol=n_pol_mu, alpha_nl=alpha_nl
 )
 st.subheader(f"2. Muon Vortex Core — Mode ({m_tor_mu}, {n_pol_mu}) [R_Compton = {meta_mu['R_compton_fm']:.3f} fm]")
-col_mu1, col_mu2 = st.columns([2, 1])
+col_mu1, col_mu2, col_mu3 = st.columns([1.15, 1.15, 0.8])
 with col_mu1:
     st.plotly_chart(make_vortex_figure(R_mu, Z_mu, psi_mu, meta_mu["R_compton_fm"], "Plasma"), use_container_width=True)
 with col_mu2:
-    st.markdown("**Muon Geometric Anchors (`constants.py`):**")
+    if st.toggle("Render 3D Muon Helix", key="render_3d_mu"):
+        st.plotly_chart(
+            make_3d_helical_torus(meta_mu["R0_fm"], meta_mu["sigma_fm"], m_tor_mu, n_pol_mu, "#ff4b4b"),
+            use_container_width=True,
+        )
+    else:
+        st.info("3D rendering paused to save resources. Toggle switch above to inspect the helical-toroidal core.")
+with col_mu3:
+    st.markdown("**Muon Anchors (`constants.py`):**")
     st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_mu}, {n_pol_mu})`")
     st.write(f"- Rest mass: `{const.M_MUON_MEV:.4f} MeV`")
-    st.write(f"- Major torus radius $R_0$: `{meta_mu['R0_fm']:.3f} fm`")
-    st.write(f"- Core tube width $\\sigma$: `{meta_mu['sigma_fm']:.3f} fm`")
-    st.write(f"- Scale compression ($R_e / R_\\mu$): `{const.MUON_ELECTRON_MASS_RATIO:.2f}x`")
+    st.write(f"- Major radius $R_0$: `{meta_mu['R0_fm']:.3f} fm`")
+    st.write(f"- Tube width $\\sigma$: `{meta_mu['sigma_fm']:.3f} fm`")
+    st.write(f"- Scale ratio ($R_e / R_\\mu$): `{const.MUON_ELECTRON_MASS_RATIO:.2f}x`")
