@@ -42,9 +42,10 @@ with col1:
         xaxis_title="Radial coordinate r / R_Compton_e",
         yaxis_title="Axial coordinate z / R_Compton_e",
         yaxis=dict(scaleanchor="x", scaleratio=1, range=[-5, 5]),
-        xaxis=dict(range=[0, 10]),
+        xaxis=dict(range=),
         height=520,
     )
+
    
     st.plotly_chart(fig, use_container_width=True)
 
