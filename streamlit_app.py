@@ -12,10 +12,18 @@ st.caption(
 )
 
 with st.sidebar:
-    st.header("Topological & Medium Parameters")
-    m_tor = st.number_input("Toroidal winding number (m_tor)", min_value=1, max_value=10, value=1)
-    n_pol = st.number_input("Poloidal winding number (n_pol)", min_value=1, max_value=10, value=1)
+    st.header("1. Global Medium Property")
     alpha_nl = st.slider("Nonlinear stiffness coupling (alpha_nl)", 0.0, 2.0, 0.1, step=0.05)
+
+    st.divider()
+    st.header("2. Electron Topology")
+    m_tor_e = st.number_input("Electron toroidal winding (m_tor)", min_value=1, max_value=20, value=1)
+    n_pol_e = st.number_input("Electron poloidal winding (n_pol)", min_value=1, max_value=20, value=1)
+
+    st.divider()
+    st.header("3. Muon Topology")
+    m_tor_mu = st.number_input("Muon toroidal winding (m_tor)", min_value=1, max_value=20, value=2)
+    n_pol_mu = st.number_input("Muon poloidal winding (n_pol)", min_value=1, max_value=20, value=3)
 
     st.divider()
     st.subheader("Target Experimental Benchmarks")
@@ -48,13 +56,16 @@ def make_vortex_figure(R, Z, psi, r_c_fm, colorscale="Viridis"):
 
 
 # --- Top Plot: Electron ---
-R_e, Z_e, psi_e, meta_e = solver.get_lepton_ansatz("electron", m_tor=m_tor, n_pol=n_pol, alpha_nl=alpha_nl)
-st.subheader(f"1. Electron Vortex Core (R_Compton = {meta_e['R_compton_fm']:.2f} fm)")
+R_e, Z_e, psi_e, meta_e = solver.get_lepton_ansatz(
+    "electron", m_tor=m_tor_e, n_pol=n_pol_e, alpha_nl=alpha_nl
+)
+st.subheader(f"1. Electron Vortex Core — Mode ({m_tor_e}, {n_pol_e}) [R_Compton = {meta_e['R_compton_fm']:.2f} fm]")
 col_e1, col_e2 = st.columns([2, 1])
 with col_e1:
     st.plotly_chart(make_vortex_figure(R_e, Z_e, psi_e, meta_e["R_compton_fm"], "Viridis"), use_container_width=True)
 with col_e2:
     st.markdown("**Electron Geometric Anchors (`constants.py`):**")
+    st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_e}, {n_pol_e})`")
     st.write(f"- Rest mass: `{const.M_ELECTRON_MEV:.6f} MeV`")
     st.write(f"- Major torus radius $R_0$: `{meta_e['R0_fm']:.2f} fm`")
     st.write(f"- Core tube width $\\sigma$: `{meta_e['sigma_fm']:.2f} fm`")
@@ -63,13 +74,16 @@ with col_e2:
 st.divider()
 
 # --- Bottom Plot: Muon ---
-R_mu, Z_mu, psi_mu, meta_mu = solver.get_lepton_ansatz("muon", m_tor=m_tor, n_pol=n_pol, alpha_nl=alpha_nl)
-st.subheader(f"2. Muon Vortex Core (R_Compton = {meta_mu['R_compton_fm']:.3f} fm)")
+R_mu, Z_mu, psi_mu, meta_mu = solver.get_lepton_ansatz(
+    "muon", m_tor=m_tor_mu, n_pol=n_pol_mu, alpha_nl=alpha_nl
+)
+st.subheader(f"2. Muon Vortex Core — Mode ({m_tor_mu}, {n_pol_mu}) [R_Compton = {meta_mu['R_compton_fm']:.3f} fm]")
 col_mu1, col_mu2 = st.columns([2, 1])
 with col_mu1:
     st.plotly_chart(make_vortex_figure(R_mu, Z_mu, psi_mu, meta_mu["R_compton_fm"], "Plasma"), use_container_width=True)
 with col_mu2:
     st.markdown("**Muon Geometric Anchors (`constants.py`):**")
+    st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_mu}, {n_pol_mu})`")
     st.write(f"- Rest mass: `{const.M_MUON_MEV:.4f} MeV`")
     st.write(f"- Major torus radius $R_0$: `{meta_mu['R0_fm']:.3f} fm`")
     st.write(f"- Core tube width $\\sigma$: `{meta_mu['sigma_fm']:.3f} fm`")
