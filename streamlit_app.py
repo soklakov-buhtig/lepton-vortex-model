@@ -27,11 +27,6 @@ with st.sidebar:
         st.session_state["eta_visc"] = round(eta, 2)
         st.session_state["delta_pack"] = round(d_pack, 4)
 
-
-
-    for k, default in [("alpha_nl", 0.25), ("beta_nl", 1.0), ("gamma_nl", 0.05), ("eta_visc", 1.2)]:
-        if k not in st.session_state:
-            st.session_state[k] = default
     a_min, a_max = const.MEDIUM_BOUNDS["alpha_nl"]
     b_min, b_max = const.MEDIUM_BOUNDS["beta_nl"]
     g_min, g_max = const.MEDIUM_BOUNDS["gamma_nl"]
