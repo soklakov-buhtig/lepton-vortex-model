@@ -55,7 +55,7 @@ def solve_variational_lepton(
     rho_torus = np.sqrt((R - R0_opt) ** 2 + Z ** 2)
     psi = np.exp(-0.5 * (rho_torus / sig_opt) ** 2) * (R / (R + 0.05 * R0_opt))
 
-    obs = phys.compute_observables(R0_opt, sig_opt, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl)
+    obs = phys.compute_observables(R0_opt, sig_opt, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
     obs["R_compton_fm"] = float(r_c_fm)
     obs["plot_scale_fm"] = float(1.5 * effective_scale_fm / 4.0)
     return R, Z, psi, obs
