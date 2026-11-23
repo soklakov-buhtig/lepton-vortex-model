@@ -174,7 +174,7 @@ with col_e1:
 with col_e2:
     if st.toggle("Render 3D Electron Helix", key="render_3d_e"):
         st.plotly_chart(
-            make_3d_helical_torus(meta_e["R0_fm"], meta_e["sigma_fm"], m_tor_e, n_pol_e, "#00f2fe"),
+            make_3d_helical_torus(meta_e["R0_fm"], meta_e["sigma_fm"], m_tor_e, n_pol_e, "#00f2fe", ribbon_w_fm=meta_e["ribbon_w_fm"]),
             use_container_width=True,
         )
     else:
@@ -182,7 +182,9 @@ with col_e2:
 with col_e3:
     st.metric("Computed Electron Mass", f"{meta_e['mass_mev']:.5f} MeV", delta=f"Target: {const.M_ELECTRON_MEV:.5f}")
     st.metric("Major Radius R0 / Width σ", f"{meta_e['R0_fm']:.1f} / {meta_e['sigma_fm']:.1f} fm")
-    st.write(f"**Hopf charge $Q_H$:** `{meta_e['hopf_charge']}` | **$g$-factor:** `{meta_e['g_factor']:.6f}`")
+#    st.write(f"**Hopf charge $Q_H$:** `{meta_e['hopf_charge']}` | **$g$-factor:** `{meta_e['g_factor']:.6f}`")
+    st.write(f"**Hopf charge $Q_H$:** `{meta_e['hopf_charge']}` | **$g$-factor:** `{meta_e['g_factor']:.6f}` | **Cover:** `{meta_e['coverage']:.3f}`")
+
 
 st.divider()
 
@@ -199,7 +201,7 @@ with col_mu1:
 with col_mu2:
     if st.toggle("Render 3D Muon Helix", key="render_3d_mu"):
         st.plotly_chart(
-            make_3d_helical_torus(meta_mu["R0_fm"], meta_mu["sigma_fm"], m_tor_mu, n_pol_mu, "#ff4b4b"),
+            make_3d_helical_torus(meta_mu["R0_fm"], meta_mu["sigma_fm"], m_tor_mu, n_pol_mu, "#ff4b4b", ribbon_w_fm=meta_mu["ribbon_w_fm"]),
             use_container_width=True,
         )
     else:
@@ -208,7 +210,9 @@ with col_mu3:
     ratio_calc = meta_mu["mass_mev"] / max(meta_e["mass_mev"], 1e-12)
     st.metric("Computed Muon Mass", f"{meta_mu['mass_mev']:.3f} MeV", delta=f"Target: {const.M_MUON_MEV:.2f}")
     st.metric("Mass Ratio (m_mu / m_e)", f"{ratio_calc:.2f}", delta=f"Target: {const.MUON_ELECTRON_MASS_RATIO:.2f}")
-    st.write(f"**R0 / σ:** `{meta_mu['R0_fm']:.2f} / {meta_mu['sigma_fm']:.2f} fm` | **$Q_H$:** `{meta_mu['hopf_charge']}`")
+#    st.write(f"**R0 / σ:** `{meta_mu['R0_fm']:.2f} / {meta_mu['sigma_fm']:.2f} fm` | **$Q_H$:** `{meta_mu['hopf_charge']}`")
+    st.write(f"**R0 / σ:** `{meta_mu['R0_fm']:.2f} / {meta_mu['sigma_fm']:.2f} fm` | **$Q_H$:** `{meta_mu['hopf_charge']}` | **Cover:** `{meta_mu['coverage']:.3f}`")
+
 
 if "calib_loss" in st.session_state:
     r_ratio = meta_e["R0_fm"] / max(meta_mu["R0_fm"], 1e-12)
