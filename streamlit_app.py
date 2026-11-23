@@ -16,6 +16,18 @@ with st.sidebar:
 
     st.header("1. Global Medium Properties")
     for k, default in [("alpha_nl", 0.25), ("beta_nl", 1.0), ("gamma_nl", 0.05), ("eta_visc", 1.2)]:
+        
+        if k not in st.session_state:
+            st.session_state[k] = default
+
+    if "pending_calib" in st.session_state:
+        p = st.session_state.pop("pending_calib")
+        st.session_state["alpha_nl"] = round(p, 3)
+        st.session_state["beta_nl"] = round(p, 3)
+        st.session_state["gamma_nl"] = round(p, 4)
+        st.session_state["eta_visc"] = round(p, 2)
+
+    for k, default in [("alpha_nl", 0.25), ("beta_nl", 1.0), ("gamma_nl", 0.05), ("eta_visc", 1.2)]:
         if k not in st.session_state:
             st.session_state[k] = default
 
@@ -32,12 +44,10 @@ with st.sidebar:
                 st.session_state.get("m_tor_mu", 5),
                 st.session_state.get("n_pol_mu", 7),
             )
-            st.session_state["alpha_nl"] = round(best_p[0], 3)
-            st.session_state["beta_nl"] = round(best_p[1], 3)
-            st.session_state["gamma_nl"] = round(best_p[2], 4)
-            st.session_state["eta_visc"] = round(best_p[3], 2)
+            st.session_state["pending_calib"] = best_p
             st.session_state["calib_loss"] = loss_val
             st.rerun()
+
 
     if "calib_loss" in st.session_state:
         st.caption(f"Calibrator log-error: `{st.session_state['calib_loss']:.5f}`")
