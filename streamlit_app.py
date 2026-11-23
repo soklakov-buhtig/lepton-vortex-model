@@ -31,11 +31,11 @@ with st.sidebar:
     for k, default in [("alpha_nl", 0.25), ("beta_nl", 1.0), ("gamma_nl", 0.05), ("eta_visc", 1.2)]:
         if k not in st.session_state:
             st.session_state[k] = default
+    alpha_nl = st.slider("EM saturation coupling (alpha_nl)", 0.01, 500.0, key="alpha_nl", step=0.1)
+    beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", 0.01, 100.0, key="beta_nl", step=0.1)
+    gamma_nl = st.slider("Background medium pressure (gamma_nl)", 0.001, 50.0, key="gamma_nl", step=0.01)
+    eta_visc = st.slider("Medium shear viscosity (eta_visc)", 0.1, 100.0, key="eta_visc", step=0.1)
 
-    alpha_nl = st.slider("EM saturation coupling (alpha_nl)", 0.01, 50.0, key="alpha_nl", step=0.05)
-    beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", 0.01, 10.0, key="beta_nl", step=0.05)
-    gamma_nl = st.slider("Background medium pressure (gamma_nl)", 0.001, 2.0, key="gamma_nl", step=0.005)
-    eta_visc = st.slider("Medium shear viscosity (eta_visc)", 0.1, 20.0, key="eta_visc", step=0.1)
 
     if st.button("Run Global Medium Calibrator", use_container_width=True):
         with st.spinner("Calibrating medium constants via Differential Evolution..."):
