@@ -36,7 +36,13 @@ def E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e):
     # E_grad_p = 0.5 * hbar_c * R0 / (sig ** 2)
     # OLD_HALF_KIN: E_mom = 0.5 * hbar_c_eff * (m_tor + 0.5 * n_pol) / R0
     # OLD_HALF_KIN: E_grad_p = 0.5 * hbar_c_eff * R0 / (sig ** 2)
-    E_mom = (0.5 / np.pi) * hbar_c_eff * (m_tor + 0.5 * n_pol) / R0
+    # OLD_UNPACKED_KIN: E_mom = (0.5 / np.pi) * hbar_c_eff * (m_tor + 0.5 * n_pol) / R0
+    l_eff = (r_e / const.ALPHA_FS) / np.sqrt(n_eff)
+    d_pitch = (2.0 * np.pi * R0 * sig) / np.sqrt((m_tor * R0) ** 2 + (n_pol * sig) ** 2)
+    eta_pack = l_eff / max(d_pitch, 1e-12)
+    n_kin_eff = (m_tor + 0.5 * n_pol) / np.sqrt(1.0 + eta_pack)
+    E_mom = (0.5 / np.pi) * hbar_c_eff * n_kin_eff / R0
+
     E_grad_p = (0.5 / np.pi) * hbar_c_eff * R0 / (sig ** 2)
 
     return E_mom + E_grad_p
