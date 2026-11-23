@@ -209,24 +209,25 @@ if "calib_loss" in st.session_state:
     with st.sidebar:
         st.divider()
         st.code(
-            f"anchor\t{anchor_mode}\n"
-            f"topo\t({m_tor_e},{n_pol_e})->({m_tor_mu},{n_pol_mu})\n"
-            f"Q_H\t{meta_e['hopf_charge']}->{meta_mu['hopf_charge']}\n"
-            f"log_error\t{st.session_state['calib_loss']:.5f}\n"
-            f"alpha_nl\t{alpha_nl:.6g}\n"
-            f"beta_nl\t{beta_nl:.6g}\n"
-            f"gamma_nl\t{gamma_nl:.6g}\n"
-            f"eta_visc\t{eta_visc:.6g}\n"
-            f"delta_pack\t{delta_pack:.6g}\n"
-            f"m_e_MeV\t{meta_e['mass_mev']:.5f}\n"
-            f"R0_e_fm\t{meta_e['R0_fm']:.2f}\n"
-            f"sig_e_fm\t{meta_e['sigma_fm']:.2f}\n"
-            f"g_e\t{meta_e['g_factor']:.6f}\n"
-            f"m_mu_MeV\t{meta_mu['mass_mev']:.3f}\n"
-            f"R0_mu_fm\t{meta_mu['R0_fm']:.2f}\n"
-            f"sig_mu_fm\t{meta_mu['sigma_fm']:.2f}\n"
-            f"g_mu\t{meta_mu['g_factor']:.6f}\n"
-            f"mass_ratio\t{ratio_calc:.2f}\n"
-            f"rad_ratio\t{r_ratio:.2f}",
+            f"{anchor_mode}\n"
+            f"({m_tor_e},{n_pol_e})->({m_tor_mu},{n_pol_mu})\n"
+            f"{meta_e['hopf_charge']}->{meta_mu['hopf_charge']}\n"
+            f"{st.session_state['calib_loss']:.5f}\n"
+            f"{alpha_nl:.6g}\n"
+            f"{beta_nl:.6g}\n"
+            f"{gamma_nl:.6g}\n"
+            f"{eta_visc:.6g}\n"
+            f"{delta_pack:.6g}\n"
+            f"{meta_e['mass_mev']:.5f}\n"
+            f"{meta_e['R0_fm']:.2f}\n"
+            f"{meta_e['sigma_fm']:.2f}\n"
+            f"{meta_e['g_factor']:.6f}\n"
+            f"{meta_mu['mass_mev']:.3f}\n"
+            f"{meta_mu['R0_fm']:.2f}\n"
+            f"{meta_mu['sigma_fm']:.2f}\n"
+            f"{meta_mu['g_factor']:.6f}\n"
+            f"{ratio_calc:.2f}\n"
+            f"{r_ratio:.2f}",
             language="text",
         )
+
