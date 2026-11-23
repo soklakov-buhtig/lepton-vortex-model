@@ -6,8 +6,9 @@ def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, b
     r_e = const.R_CLASSICAL_E * 1e15   # ~2.818 fm
     r_c = const.R_COMPTON_E * 1e15     # ~386.16 fm
 
-    R0 = max(R0_fm, 1e-3)
-    sig = max(sigma_fm, 1e-3)
+    R0 = np.maximum(R0_fm, 1e-3)
+    sig = np.maximum(sigma_fm, 1e-3)
+
     H = m_tor * n_pol
     shear_rate = (H ** 1.5) * (r_e / R0)
     Wi = eta_visc * shear_rate
