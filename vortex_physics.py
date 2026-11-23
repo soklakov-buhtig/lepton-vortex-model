@@ -1,8 +1,7 @@
 import numpy as np
 import constants as const
 
-
-def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05):
+def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05, eta_visc=1.0):
     hbar_c = (const.HBAR * const.C / const.MEV_TO_J) * 1e15
     r_e = const.R_CLASSICAL_E * 1e15   # ~2.818 fm
     r_c = const.R_COMPTON_E * 1e15     # ~386.16 fm
@@ -10,6 +9,9 @@ def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, b
     R0 = max(R0_fm, 1e-3)
     sig = max(sigma_fm, 1e-3)
     H = m_tor * n_pol
+    shear_rate = (H ** 1.5) * (r_e / R0)
+    Wi = eta_visc * shear_rate
+    buckling_factor = 1.0 + (Wi ** 3) / (1.0 + 0.01 * (Wi ** 3))
 
     # 1. Circulation kinetic energy (scales as 1/R0 by angular momentum conservation)
     E_kin = 0.5 * hbar_c * (m_tor + 0.5 * n_pol) / R0
@@ -20,7 +22,7 @@ def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, b
     # 3. Supercoiling ribbon contraction with central core saturation (gamma_nl = Born-Infeld ceiling)
     core_density = (H ** 2) * ((r_e / R0) ** 2)
     saturated_density = core_density / np.sqrt(1.0 + gamma_nl * core_density)
-    E_supercoil = alpha_nl * (hbar_c / r_c) * (R0 / r_e) * (H ** 2) / (1.0 + 0.2 * saturated_density)
+    E_supercoil = alpha_nl * (hbar_c / r_c) * (R0 / r_e) * buckling_factor / (1.0 + gamma_nl * saturated_density)
 
     # 4. Short-range Faddeev-Skyrme ribbon layer stiffness (prevents collapse at R0 ~ r_e)
     E_core = beta_nl * hbar_c * H * (r_e / (R0 ** 2))
