@@ -106,7 +106,7 @@ def make_vortex_figure(R, Z, psi, r_c_fm, colorscale="Viridis"):
     return fig
 
 
-def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe"):
+def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe", ribbon_w_fm=None):
     # Transparent reference torus shell
     u = np.linspace(0, 2 * np.pi, 40)
     v = np.linspace(0, 2 * np.pi, 24)
@@ -122,7 +122,12 @@ def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe"):
 
     phi = m_tor * T
     theta = n_pol * T
-    ribbon_half_w = 0.28 * sigma
+    # OLD_RIBBON: ribbon_half_w = 0.28 * sigma
+    if ribbon_w_fm is not None:
+        ribbon_half_w = float(np.clip(0.5 * ribbon_w_fm, 0.005 * sigma, 1.5 * sigma))
+    else:
+        ribbon_half_w = 0.28 * sigma
+
 
     # Center curve on the torus
     r_c = R0 + sigma * np.cos(theta)
