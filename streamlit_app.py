@@ -58,6 +58,7 @@ with st.sidebar:
                 st.session_state.get("n_pol_e", 3),
                 st.session_state.get("m_tor_mu", 5),
                 st.session_state.get("n_pol_mu", 7),
+                anchor_mode=anchor_mode,
             )
             st.session_state["pending_calib"] = best_p
             st.session_state["calib_loss"] = loss_val
