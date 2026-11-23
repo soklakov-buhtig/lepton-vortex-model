@@ -121,7 +121,7 @@ R_e, Z_e, psi_e, meta_e = solver.solve_variational_lepton(
 st.subheader(f"1. Electron Vortex Core — Mode ({m_tor_e}, {n_pol_e}) [R_Compton = {meta_e['R_compton_fm']:.2f} fm]")
 col_e1, col_e2, col_e3 = st.columns([1.15, 1.15, 0.8])
 with col_e1:
-    st.plotly_chart(make_vortex_figure(R_e, Z_e, psi_e, meta_e["R_compton_fm"], "Viridis"), use_container_width=True)
+    st.plotly_chart(make_vortex_figure(R_e, Z_e, psi_e, meta_e["plot_scale_fm"], "Viridis"), use_container_width=True)
 with col_e2:
     if st.toggle("Render 3D Electron Helix", key="render_3d_e"):
         st.plotly_chart(
@@ -146,7 +146,7 @@ R_mu, Z_mu, psi_mu, meta_mu = solver.solve_variational_lepton(
 st.subheader(f"2. Muon Vortex Core — Mode ({m_tor_mu}, {n_pol_mu}) [R_Compton = {meta_mu['R_compton_fm']:.3f} fm]")
 col_mu1, col_mu2, col_mu3 = st.columns([1.15, 1.15, 0.8])
 with col_mu1:
-    st.plotly_chart(make_vortex_figure(R_mu, Z_mu, psi_mu, meta_mu["R_compton_fm"], "Plasma"), use_container_width=True)
+    st.plotly_chart(make_vortex_figure(R_mu, Z_mu, psi_mu, meta_mu["plot_scale_fm"], "Plasma"), use_container_width=True)
 with col_mu2:
     if st.toggle("Render 3D Muon Helix", key="render_3d_mu"):
         st.plotly_chart(
