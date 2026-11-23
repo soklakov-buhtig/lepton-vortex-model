@@ -39,7 +39,7 @@ MUON_ELECTRON_MASS_RATIO = M_MUON_MEV / M_ELECTRON_MEV  # ~206.768283
 # =====================================================================
 PREPRINT_I_DOI = "10.5281/zenodo.23952161"
 PREPRINT_II_DOI = "10.5281/zenodo.24446953"
-
+E_SCHWINGER = 1.323285e18  # Schwinger vacuum breakdown limit [V/m]
 # Default numerical grid placeholders (in units of R_COMPTON_E)
 DEFAULT_R_MAX = 10.0
 DEFAULT_Z_MAX = 10.0
