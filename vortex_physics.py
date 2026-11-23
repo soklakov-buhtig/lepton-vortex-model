@@ -68,8 +68,12 @@ def soliton_total_energy_mev(
     alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05, eta_visc=1.0, delta_pack=1.0
 ):
     hbar_c = (const.HBAR * const.C / const.MEV_TO_J) * 1e15
-    r_e = const.R_CLASSICAL_E * 1e15
-    r_c = const.R_COMPTON_E * 1e15
+    # OLD_FIXED_SCALES:
+    # r_e = const.R_CLASSICAL_E * 1e15
+    # r_c = const.R_COMPTON_E * 1e15
+    l_vac = (((const.HBAR * const.C) / (const.EPS0 * (const.E_SCHWINGER ** 2))) ** 0.25) * 1e15
+    r_e = const.ALPHA_FS * l_vac
+    r_c = l_vac
 
     R0 = np.maximum(R0_fm, 1e-3)
     sig = np.maximum(sigma_fm, 1e-3)
