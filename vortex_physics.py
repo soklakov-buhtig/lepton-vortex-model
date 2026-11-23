@@ -9,8 +9,6 @@ def medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e):
 def E_1_waveguide(    R0, sig, H, alpha_nl, gamma_nl, hbar_c, r_e, r_c):
     # Row 1: Optical-magnetic waveguide confinement (refraction on R0 + magnetic pinch on sigma)
     n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
-    dn2 = (n_eff ** 2) - 1.0
-    n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
     sqrt_n = np.sqrt(n_eff)
     r_c_eff = r_c / sqrt_n
     r_e_eff = r_e / sqrt_n
@@ -41,12 +39,21 @@ def E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e):
 def E_3_torsion_buckling(R0, sig, H, alpha_nl, gamma_nl, beta_nl, eta_visc, hbar_c, r_e):
     # Row 3: Ribbon torsion stiffness (beta_nl) + two-channel shear buckling cascade (eta_visc)
     n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
+    r_e_eff = r_e / np.sqrt(n_eff)
     hbar_c_eff = hbar_c / n_eff
-    E_torsion = beta_nl * hbar_c_eff * (H ** 2) * (r_e / (R0 ** 2) + r_e / (sig ** 2))
-    shear_rad = (eta_visc / n_eff) * (H ** 2) * (r_e / R0)
-    shear_tan = (eta_visc / n_eff) * H * (r_e / sig)
+    E_torsion = beta_nl * hbar_c_eff * (H ** 2) * (r_e_eff / (R0 ** 2) + r_e_eff / (sig ** 2))
+    shear_rad = (eta_visc / n_eff) * (H ** 2) * (r_e_eff / R0)
+    shear_tan = (eta_visc / n_eff) * H * (r_e_eff / sig)
     chi = shear_rad + shear_tan
     buckling_factor = 1.0 + (chi ** 3) / (1.0 + 1e-4 * (chi ** 3))
+
+#    n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
+#    hbar_c_eff = hbar_c / n_eff
+#    E_torsion = beta_nl * hbar_c_eff * (H ** 2) * (r_e / (R0 ** 2) + r_e / (sig ** 2))
+#    shear_rad = (eta_visc / n_eff) * (H ** 2) * (r_e / R0)
+#    shear_tan = (eta_visc / n_eff) * H * (r_e / sig)
+#    chi = shear_rad + shear_tan
+#    buckling_factor = 1.0 + (chi ** 3) / (1.0 + 1e-4 * (chi ** 3))
 
 #    E_torsion = beta_nl * hbar_c * (H ** 2) * (r_e / (R0 ** 2) + r_e / (sig ** 2))
 #    shear_rad = eta_visc * (H ** 2) * (r_e / R0)
