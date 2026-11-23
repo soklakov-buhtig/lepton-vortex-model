@@ -46,8 +46,8 @@ DEFAULT_Z_MAX = 10.0
 DEFAULT_GRID_N = 128
 
 MEDIUM_BOUNDS = {
-    "alpha_nl": (0.01, 500.0),
-    "beta_nl": (0.01, 100000.0),
-    "gamma_nl": (0.001, 50.0),
-    "eta_visc": (0.1, 100.0),
+    "alpha_nl": (0.01, 1000000.0),
+    "beta_nl": (0.01, 1000000.0),
+    "gamma_nl": (0.001, 1000000.0),
+    "eta_visc": (0.1, 1000000.0),
 }
