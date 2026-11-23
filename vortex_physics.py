@@ -9,13 +9,22 @@ def E_1_waveguide(R0, sig, H, alpha_nl, hbar_c, r_e, r_c):
 #    E_pinch = alpha_nl * hbar_c * np.sqrt(H) * (sig ** 2) / (R0 ** 2)
     return E_refract + E_pinch
 
+def medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e):
+    # Effective refractive index n_eff(u) from Preprint I / Slide 16 nonlinear saturation
+    u_density = (H ** 2) * ((r_e / R0) ** 2)
+    return 1.0 + (alpha_nl * u_density) / (1.0 + gamma_nl * u_density)
 
-def E_2_gradient_kin(R0, sig, m_tor, n_pol, hbar_c):
-    # Row 2: Circulation angular momentum (1/R0) + ocean density equalization pressure (R0/sigma^2)
-    E_mom = 0.5 * hbar_c * (m_tor + 0.5 * n_pol) / R0
-    E_grad_p = 0.5 * hbar_c * R0 / (sig ** 2)
+
+def E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e):
+    # Row 2: Circulation angular momentum + ocean density equalization pressure in variable medium (c_eff = c / n_eff)
+    n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
+    hbar_c_eff = hbar_c / n_eff
+    # OLD_VACUUM_KIN:
+    # E_mom = 0.5 * hbar_c * (m_tor + 0.5 * n_pol) / R0
+    # E_grad_p = 0.5 * hbar_c * R0 / (sig ** 2)
+    E_mom = 0.5 * hbar_c_eff * (m_tor + 0.5 * n_pol) / R0
+    E_grad_p = 0.5 * hbar_c_eff * R0 / (sig ** 2)
     return E_mom + E_grad_p
-
 
 def E_3_torsion_buckling(R0, sig, H, beta_nl, eta_visc, hbar_c, r_e):
     # Row 3: Ribbon torsion stiffness (beta_nl) + two-channel shear buckling cascade (eta_visc)
