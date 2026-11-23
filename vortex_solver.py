@@ -91,6 +91,7 @@ def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
         const.MEDIUM_BOUNDS["beta_nl"],
         const.MEDIUM_BOUNDS["gamma_nl"],
         const.MEDIUM_BOUNDS["eta_visc"],
+        const.MEDIUM_BOUNDS["delta_pack"],
     ]
 
 
