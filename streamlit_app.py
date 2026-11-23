@@ -17,6 +17,7 @@ with st.sidebar:
     alpha_nl = st.slider("EM saturation coupling (alpha_nl)", 0.0, 2.0, 0.15, step=0.05)
     beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", 0.0, 5.0, 1.0, step=0.1)
     gamma_nl = st.slider("Background medium pressure (gamma_nl)", 0.0, 1.0, 0.05, step=0.01)
+    eta_visc = st.slider("Medium shear viscosity (eta_visc)", 0.0, 10.0, 1.0, step=0.1)
 
 
     st.divider()
