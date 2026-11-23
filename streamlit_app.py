@@ -21,11 +21,12 @@ with st.sidebar:
             st.session_state[k] = default
 
     if "pending_calib" in st.session_state:
-        p = st.session_state.pop("pending_calib")
-        st.session_state["alpha_nl"] = round(p, 3)
-        st.session_state["beta_nl"] = round(p, 3)
-        st.session_state["gamma_nl"] = round(p, 4)
-        st.session_state["eta_visc"] = round(p, 2)
+        a, b, g, eta = st.session_state.pop("pending_calib")
+        st.session_state["alpha_nl"] = round(a, 3)
+        st.session_state["beta_nl"] = round(b, 3)
+        st.session_state["gamma_nl"] = round(g, 4)
+        st.session_state["eta_visc"] = round(eta, 2)
+
 
     for k, default in [("alpha_nl", 0.25), ("beta_nl", 1.0), ("gamma_nl", 0.05), ("eta_visc", 1.2)]:
         if k not in st.session_state:
