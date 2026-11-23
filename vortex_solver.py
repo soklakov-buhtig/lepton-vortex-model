@@ -35,7 +35,9 @@ def solve_variational_lepton(
     r_c_m = const.R_COMPTON_MU if lepton == "muon" else const.R_COMPTON_E
     r_c_fm = r_c_m * 1e15
 
-    x0 = np.array([np.log(r_c_fm), np.log(r_c_fm * np.sqrt(const.ALPHA_FS))])
+    r0_init, sig_init, _ = _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+    x0 = np.array([np.log(r0_init), np.log(sig_init)])
+
 
     def objective(x):
         R0_try = np.exp(x[0])
