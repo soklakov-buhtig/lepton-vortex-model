@@ -208,7 +208,7 @@ if "calib_loss" in st.session_state:
     r_ratio = meta_e["R0_fm"] / max(meta_mu["R0_fm"], 1e-12)
     with st.sidebar:
         st.divider()
-        st.code(
+        summary_text = (
             f"{anchor_mode}\n"
             f"({m_tor_e},{n_pol_e})->({m_tor_mu},{n_pol_mu})\n"
             f"{meta_e['hopf_charge']}->{meta_mu['hopf_charge']}\n"
@@ -221,13 +221,18 @@ if "calib_loss" in st.session_state:
             f"{meta_e['mass_mev']:.5f}\n"
             f"{meta_e['R0_fm']:.2f}\n"
             f"{meta_e['sigma_fm']:.2f}\n"
+            f"{meta_e['aspect']:.4f}\n"
+            f"{meta_e['n_eff']:.6f}\n"
             f"{meta_e['g_factor']:.6f}\n"
             f"{meta_mu['mass_mev']:.3f}\n"
             f"{meta_mu['R0_fm']:.2f}\n"
             f"{meta_mu['sigma_fm']:.2f}\n"
+            f"{meta_mu['aspect']:.4f}\n"
+            f"{meta_mu['n_eff']:.6f}\n"
             f"{meta_mu['g_factor']:.6f}\n"
             f"{ratio_calc:.2f}\n"
-            f"{r_ratio:.2f}",
-            language="text",
-        )
+            f"{r_ratio:.2f}"
+        ).replace(".", ",")
+        st.code(summary_text, language="text")
+
 
