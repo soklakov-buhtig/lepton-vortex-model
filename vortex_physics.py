@@ -127,6 +127,13 @@ def compute_observables(
     n_eff = medium_refractive_index(max(R0_fm, 1e-3), hopf_charge, alpha_nl, gamma_nl, r_e)
     # OLD_G_EFF: g_eff = 2.0 * (1.0 + (const.ALPHA_FS / (2.0 * np.pi)) * (1.0 + 0.25 * (aspect ** 2)))
     g_eff = 2.0 * (1.0 + (const.ALPHA_FS / (2.0 * np.pi)) * n_eff * (1.0 + 0.25 * (aspect ** 2)))
+    r0_safe = max(R0_fm, 1e-3)
+    sig_safe = max(sigma_fm, 1e-3)
+    r_e_eff = r_e / np.sqrt(n_eff)
+    d_pitch = (2.0 * np.pi * r0_safe * sig_safe) / np.sqrt((m_tor * r0_safe) ** 2 + (n_pol * sig_safe) ** 2)
+    phi_tan = delta_pack * hopf_charge * (r_e_eff ** 2) / (r0_safe * sig_safe)
+    ribbon_w_fm = phi_tan * d_pitch
+
 
     return {
         "mass_mev": float(mass_mev),
