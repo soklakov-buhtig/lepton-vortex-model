@@ -3,8 +3,10 @@ import constants as const
 
 def E_1_waveguide(R0, sig, H, alpha_nl, hbar_c, r_e, r_c):
     # Row 1: Optical-magnetic waveguide confinement (refraction on R0 + magnetic pinch on sigma)
-    E_refract = const.ALPHA_FS * alpha_nl * (hbar_c / r_c) * (R0 / r_e)
-    E_pinch = alpha_nl * hbar_c * np.sqrt(H) * (sig ** 2) / (R0 ** 2)
+    E_refract = const.ALPHA_FS * alpha_nl * (H ** 2) * (hbar_c / r_c) * (R0 / r_e)
+    E_pinch = alpha_nl * hbar_c * H * (sig ** 2) / (R0 ** 2)
+#    E_refract = const.ALPHA_FS * alpha_nl * (hbar_c / r_c) * (R0 / r_e)
+#    E_pinch = alpha_nl * hbar_c * np.sqrt(H) * (sig ** 2) / (R0 ** 2)
     return E_refract + E_pinch
 
 
