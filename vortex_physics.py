@@ -3,7 +3,9 @@ import constants as const
 
 def medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e):
     # Effective refractive index n_eff(u) from Preprint I / Slide 16 nonlinear saturation
-    u_density = (H ** 2) * ((r_e / R0) ** 2)
+    # OLD_U_DENSITY: u_density = (H ** 2) * ((r_e / R0) ** 2)
+    u_density = (H ** 2) * (((r_e / const.ALPHA_FS) / R0) ** 2)
+
     return 1.0 + (alpha_nl * u_density) / (1.0 + gamma_nl * u_density)
 
 def E_1_waveguide(    R0, sig, H, alpha_nl, gamma_nl, hbar_c, r_e, r_c):
