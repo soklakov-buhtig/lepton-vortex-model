@@ -13,12 +13,34 @@ st.caption(
 )
 
 with st.sidebar:
-    st.header("1. Global Medium Properties")
-    alpha_nl = st.slider("EM saturation coupling (alpha_nl)", 0.0, 2.0, 0.15, step=0.05)
-    beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", 0.0, 5.0, 1.0, step=0.1)
-    gamma_nl = st.slider("Background medium pressure (gamma_nl)", 0.0, 1.0, 0.05, step=0.01)
-    eta_visc = st.slider("Medium shear viscosity (eta_visc)", 0.0, 10.0, 1.0, step=0.1)
 
+    st.header("1. Global Medium Properties")
+    for k, default in [("alpha_nl", 0.25), ("beta_nl", 1.0), ("gamma_nl", 0.05), ("eta_visc", 1.2)]:
+        if k not in st.session_state:
+            st.session_state[k] = default
+
+    alpha_nl = st.slider("EM saturation coupling (alpha_nl)", 0.01, 50.0, key="alpha_nl", step=0.05)
+    beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", 0.01, 10.0, key="beta_nl", step=0.05)
+    gamma_nl = st.slider("Background medium pressure (gamma_nl)", 0.001, 2.0, key="gamma_nl", step=0.005)
+    eta_visc = st.slider("Medium shear viscosity (eta_visc)", 0.1, 20.0, key="eta_visc", step=0.1)
+
+    if st.button("Run Global Medium Calibrator", use_container_width=True):
+        with st.spinner("Calibrating medium constants via Differential Evolution..."):
+            best_p, loss_val = solver.calibrate_medium_constants(
+                st.session_state.get("m_tor_e", 2),
+                st.session_state.get("n_pol_e", 3),
+                st.session_state.get("m_tor_mu", 5),
+                st.session_state.get("n_pol_mu", 7),
+            )
+            st.session_state["alpha_nl"] = round(best_p[0], 3)
+            st.session_state["beta_nl"] = round(best_p[1], 3)
+            st.session_state["gamma_nl"] = round(best_p[2], 4)
+            st.session_state["eta_visc"] = round(best_p[3], 2)
+            st.session_state["calib_loss"] = loss_val
+            st.rerun()
+
+    if "calib_loss" in st.session_state:
+        st.caption(f"Calibrator log-error: `{st.session_state['calib_loss']:.5f}`")
 
     st.divider()
     st.header("2. Electron Topology")
