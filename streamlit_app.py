@@ -60,44 +60,40 @@ def make_vortex_figure(R, Z, psi, r_c_fm, colorscale="Viridis"):
 
 
 def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe"):
-    # Transparent reference torus surface
-    u = np.linspace(0, 2 * np.pi, 48)
-    v = np.linspace(0, 2 * np.pi, 28)
+    # Transparent reference torus shell
+    u = np.linspace(0, 2 * np.pi, 40)
+    v = np.linspace(0, 2 * np.pi, 24)
     U, V = np.meshgrid(u, v)
     X_tor = (R0 + sigma * np.cos(V)) * np.cos(U)
     Y_tor = (R0 + sigma * np.cos(V)) * np.sin(U)
     Z_tor = sigma * np.sin(V)
 
-    # Helical vortex filament winding (m_tor, n_pol)
-    t = np.linspace(0, 2 * np.pi, 1200)
-    phi = m_tor * t
-    theta = n_pol * t
-    x_line = (R0 + sigma * np.cos(theta)) * np.cos(phi)
-    y_line = (R0 + sigma * np.cos(theta)) * np.sin(phi)
-    z_line = sigma * np.sin(theta)
+    # Helical ribbon centerline + normal twist along the torus
+    t = np.linspace(0, 2 * np.pi, 600)
+    w = np.linspace(-1.0, 1.0, 6)
+    T, W = np.meshgrid(t, w, indexing="ij")
+
+    phi = m_tor * T
+    theta = n_pol * T
+    ribbon_half_w = 0.28 * sigma
+
+    # Center curve on the torus
+    r_c = R0 + sigma * np.cos(theta)
+    xc, yc, zc = r_c * np.cos(phi), r_c * np.sin(phi), sigma * np.sin(theta)
+
+    # Ribbon width vector lying tangent to the torus surface (twisting with theta)
+    nx = -np.sin(theta) * np.cos(phi)
+    ny = -np.sin(theta) * np.sin(phi)
+    nz = np.cos(theta)
+
+    Xr = xc + W * ribbon_half_w * nx
+    Yr = yc + W * ribbon_half_w * ny
+    Zr = zc + W * ribbon_half_w * nz
 
     fig = go.Figure()
-    fig.add_trace(
-        go.Surface(
-            x=X_tor,
-            y=Y_tor,
-            z=Z_tor,
-            opacity=0.18,
-            showscale=False,
-            colorscale="Greys",
-            name="Core Shell",
-        )
-    )
-    fig.add_trace(
-        go.Scatter3d(
-            x=x_line,
-            y=y_line,
-            z=z_line,
-            mode="lines",
-            line=dict(color=line_color, width=5),
-            name=f"Helix ({m_tor},{n_pol})",
-        )
-    )
+    fig.add_trace(go.Surface(x=X_tor, y=Y_tor, z=Z_tor, opacity=0.14, showscale=False, colorscale="Greys"))
+    fig.add_trace(go.Surface(x=Xr, y=Yr, z=Zr, showscale=False, colorscale=[[0, line_color], [1, "#ffffff"]]))
+
     lim = R0 + 1.5 * sigma
     fig.update_layout(
         scene=dict(
@@ -111,6 +107,7 @@ def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe"):
         showlegend=False,
     )
     return fig
+
 
 
 # --- Top Row: Electron ---
