@@ -134,7 +134,6 @@ def compute_observables(
     phi_tan = delta_pack * hopf_charge * (r_e_eff ** 2) / (r0_safe * sig_safe)
     ribbon_w_fm = phi_tan * d_pitch
 
-
     return {
         "mass_mev": float(mass_mev),
         "hopf_charge": hopf_charge,
@@ -144,5 +143,6 @@ def compute_observables(
         "sigma_fm": float(sigma_fm),
         "aspect": float(aspect),
         "n_eff": float(n_eff),
-
+        "ribbon_w_fm": float(ribbon_w_fm),
+        "coverage": float(phi_tan),
     }
