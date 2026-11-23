@@ -131,8 +131,14 @@ def compute_observables(
     sig_safe = max(sigma_fm, 1e-3)
     r_e_eff = r_e / np.sqrt(n_eff)
     d_pitch = (2.0 * np.pi * r0_safe * sig_safe) / np.sqrt((m_tor * r0_safe) ** 2 + (n_pol * sig_safe) ** 2)
-    phi_tan = delta_pack * hopf_charge * (r_e_eff ** 2) / (r0_safe * sig_safe)
-    ribbon_w_fm = phi_tan * d_pitch
+#    phi_tan = delta_pack * hopf_charge * (r_e_eff ** 2) / (r0_safe * sig_safe)
+#    ribbon_w_fm = phi_tan * d_pitch
+    shear_rad = (eta_visc / n_eff) * (hopf_charge ** 2) * (r_e_eff / r0_safe)
+    shear_tan = (eta_visc / n_eff) * hopf_charge * (r_e_eff / sig_safe)
+    chi = shear_rad + shear_tan
+    ribbon_w_fm = (2.0 * sig_safe) / (1.0 + chi)
+    coverage = ribbon_w_fm / d_pitch
+
 
     return {
         "mass_mev": float(mass_mev),
@@ -144,5 +150,5 @@ def compute_observables(
         "aspect": float(aspect),
         "n_eff": float(n_eff),
         "ribbon_w_fm": float(ribbon_w_fm),
-        "coverage": float(phi_tan),
+        "coverage": float(coverage),
     }
