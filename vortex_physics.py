@@ -6,10 +6,15 @@ def medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e):
     u_density = (H ** 2) * ((r_e / R0) ** 2)
     return 1.0 + (alpha_nl * u_density) / (1.0 + gamma_nl * u_density)
 
-def E_1_waveguide(R0, sig, H, alpha_nl, hbar_c, r_e, r_c):
+def E_1_waveguide(    R0, sig, H, alpha_nl, gamma_nl, hbar_c, r_e, r_c):
     # Row 1: Optical-magnetic waveguide confinement (refraction on R0 + magnetic pinch on sigma)
-    E_refract = const.ALPHA_FS * alpha_nl * (H ** 2) * (hbar_c / r_c) * (R0 / r_e)
-    E_pinch = alpha_nl * hbar_c * H * (sig ** 2) / (R0 ** 2)
+    n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
+    dn2 = (n_eff ** 2) - 1.0
+    E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c) * ((R0 / r_e) ** 3)
+    E_pinch = 0.5 * dn2 * hbar_c * ((sig / r_e) ** 2)
+
+#    E_refract = const.ALPHA_FS * alpha_nl * (H ** 2) * (hbar_c / r_c) * (R0 / r_e)
+#    E_pinch = alpha_nl * hbar_c * H * (sig ** 2) / (R0 ** 2)
 #    E_refract = const.ALPHA_FS * alpha_nl * (hbar_c / r_c) * (R0 / r_e)
 #    E_pinch = alpha_nl * hbar_c * np.sqrt(H) * (sig ** 2) / (R0 ** 2)
     return E_refract + E_pinch
@@ -62,7 +67,8 @@ def soliton_total_energy_mev(
     sig = np.maximum(sigma_fm, 1e-3)
     H = m_tor * n_pol
 
-    E1 = E_1_waveguide(R0, sig, H, alpha_nl, hbar_c, r_e, r_c)
+#   E1 = E_1_waveguide(R0, sig, H, alpha_nl, hbar_c, r_e, r_c)
+    E1 = E_1_waveguide(R0, sig, H, alpha_nl, gamma_nl, hbar_c, r_e, r_c)
     # OLD_E2: E2 = E_2_gradient_kin(R0, sig, m_tor, n_pol, hbar_c)
     E2 = E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e)
     E3 = E_3_torsion_buckling(R0, sig, H, beta_nl, eta_visc, hbar_c, r_e)
