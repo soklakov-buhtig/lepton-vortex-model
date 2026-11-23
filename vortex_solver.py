@@ -80,9 +80,9 @@ def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_p
         return phys.soliton_total_energy_mev(
             np.exp(r_log), np.exp(s_log), m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=delta_pack
         )
-
     res = minimize(obj, x0, method="Nelder-Mead", options={"maxiter": 250, "xatol": 1e-4, "fatol": 1e-4})
-    return float(res.fun)
+    r_opt, _ = res.x
+    return float(res.fun), float(np.exp(r_opt))
 
 
 def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
@@ -93,15 +93,16 @@ def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
         const.MEDIUM_BOUNDS["eta_visc"],
         const.MEDIUM_BOUNDS["delta_pack"],
     ]
-
-
     log_bounds = [(np.log10(lo), np.log10(hi)) for lo, hi in bounds]
+    r_target_e = const.R_COMPTON_E * 1e15
 
     def loss(log_params):
         a, b, g, eta, d_pack = 10.0 ** np.array(log_params)
-        me = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta, d_pack)
-        mmu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta, d_pack)
-        return np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2 + np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
+        me, re_fm = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta, d_pack)
+        mmu, _ = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta, d_pack)
+        err_m = np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2 + np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
+        err_r = np.log(max(re_fm, 1e-6) / r_target_e) ** 2
+        return err_m + err_r
 
     res = differential_evolution(loss, log_bounds, maxiter=40, popsize=8, seed=42, polish=True)
     return [float(10.0 ** v) for v in res.x], float(res.fun)
