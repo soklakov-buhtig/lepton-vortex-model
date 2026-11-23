@@ -54,13 +54,18 @@ def soliton_total_energy_mev(
     return E1 + E2 + E3 + E4
 
 
-
-def compute_observables(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05, eta_visc=1.0):
+def compute_observables(
+    R0_fm, sigma_fm, m_tor=1, n_pol=1,
+    alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05, eta_visc=1.0, delta_pack=1.0
+):
     """
     Computes equilibrium rest mass (MeV), topological Hopf charge, spin,
     and effective g-factor from variational soliton parameters.
     """
-    mass_mev = soliton_total_energy_mev(R0_fm, sigma_fm, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+    mass_mev = soliton_total_energy_mev(
+        R0_fm, sigma_fm, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack
+    )
+
     hopf_charge = int(m_tor * n_pol)
 
     # Effective magnetic g-factor correction from torus aspect ratio (sigma / R0)
