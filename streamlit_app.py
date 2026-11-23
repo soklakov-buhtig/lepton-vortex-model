@@ -161,9 +161,13 @@ with col_mu2:
     else:
         st.info("3D rendering paused to save resources. Toggle switch above to inspect the helical-toroidal core.")
 with col_mu3:
-    st.markdown("**Muon Anchors (`constants.py`):**")
-    st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_mu}, {n_pol_mu})`")
-    st.write(f"- Rest mass: `{const.M_MUON_MEV:.4f} MeV`")
+    ratio_calc = meta_mu["mass_mev"] / max(meta_e["mass_mev"], 1e-12)
+    st.markdown("**Muon Variational Output:**")
+    st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_mu}, {n_pol_mu})` | $Q_H = {meta_mu['hopf_charge']}$")
+    st.write(f"- Computed mass: `{meta_mu['mass_mev']:.4f} MeV` (target `{const.M_MUON_MEV:.4f}`)")
+    st.write(f"- Computed ratio $m_\\mu / m_e$: `{ratio_calc:.2f}` (target `{const.MUON_ELECTRON_MASS_RATIO:.2f}`)")
+    st.write(f"- Effective $g$-factor: `{meta_mu['g_factor']:.6f}`")
+
     st.write(f"- Major radius $R_0$: `{meta_mu['R0_fm']:.3f} fm`")
     st.write(f"- Tube width $\\sigma$: `{meta_mu['sigma_fm']:.3f} fm`")
     st.write(f"- Scale ratio ($R_e / R_\\mu$): `{const.MUON_ELECTRON_MASS_RATIO:.2f}x`")
