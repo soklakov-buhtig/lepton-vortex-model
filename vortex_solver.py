@@ -59,3 +59,29 @@ def solve_variational_lepton(
     obs["R_compton_fm"] = float(r_c_fm)
     obs["plot_scale_fm"] = float(1.5 * effective_scale_fm / 4.0)
     return R, Z, psi, obs
+
+def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc):
+    r_guess = const.R_COMPTON_E * 1e15 / max(m_tor * n_pol, 1)
+    x0 = np.array([np.log(r_guess), np.log(0.5 * r_guess)])
+    res = minimize(
+        lambda x: phys.soliton_total_energy_mev(
+            np.exp(x[0]), np.exp(x[1]), m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc
+        ),
+        x0, method="Nelder-Mead", options={"maxiter": 350, "xatol": 1e-4, "fatol": 1e-4},
+    )
+    return float(res.fun)
+
+
+def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
+    bounds = [(0.05, 50.0), (0.01, 10.0), (0.001, 2.0), (0.1, 20.0)]
+
+    def loss(params):
+        a, b, g, eta = params
+        me = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta)
+        mmu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta)
+        err_e = np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2
+        err_mu = np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
+        return err_e + err_mu
+
+    res = differential_evolution(loss, bounds, maxiter=35, popsize=8, seed=42, polish=True)
+    return [float(v) for v in res.x], float(res.fun)
