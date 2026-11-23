@@ -135,4 +135,7 @@ def compute_observables(
         "g_factor": float(g_eff),
         "R0_fm": float(R0_fm),
         "sigma_fm": float(sigma_fm),
+        "aspect": float(aspect),
+        "n_eff": float(n_eff),
+
     }
