@@ -34,8 +34,11 @@ def E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e):
     # OLD_VACUUM_KIN:
     # E_mom = 0.5 * hbar_c * (m_tor + 0.5 * n_pol) / R0
     # E_grad_p = 0.5 * hbar_c * R0 / (sig ** 2)
-    E_mom = 0.5 * hbar_c_eff * (m_tor + 0.5 * n_pol) / R0
-    E_grad_p = 0.5 * hbar_c_eff * R0 / (sig ** 2)
+    # OLD_HALF_KIN: E_mom = 0.5 * hbar_c_eff * (m_tor + 0.5 * n_pol) / R0
+    # OLD_HALF_KIN: E_grad_p = 0.5 * hbar_c_eff * R0 / (sig ** 2)
+    E_mom = (0.5 / np.pi) * hbar_c_eff * (m_tor + 0.5 * n_pol) / R0
+    E_grad_p = (0.5 / np.pi) * hbar_c_eff * R0 / (sig ** 2)
+
     return E_mom + E_grad_p
 
 def E_3_torsion_buckling(R0, sig, H, alpha_nl, gamma_nl, beta_nl, eta_visc, hbar_c, r_e):
