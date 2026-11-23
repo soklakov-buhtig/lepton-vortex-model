@@ -21,8 +21,17 @@ def E_3_torsion_buckling(R0, sig, H, beta_nl, eta_visc, hbar_c, r_e):
 
 
 def E_4_compaction(R0, sig, H, gamma_nl, delta_pack, hbar_c, r_e):
-    # Row 4: Saturation ceiling / compaction wall "pores closed" (enabled in Stage B)
-    return 0.0
+    # Row 4: Two-channel compaction wall ("pores closed": radial core + tangential turn-to-turn packing)
+    r_core = r_e * np.sqrt(np.maximum(gamma_nl, 1e-6))
+    phi_rad = (r_core / R0) ** 2
+    phi_tan = delta_pack * H * (r_e ** 2) / (R0 * sig)
+
+    phi_total = phi_rad + phi_tan
+    phi_clamped = np.minimum(phi_total, 0.999)
+    excess = np.maximum(phi_total - 0.999, 0.0)
+    wall = (phi_clamped / (1.0 - phi_clamped)) + 1e6 * excess
+    return 0.1 * hbar_c * wall / r_e
+
 
 
 def soliton_total_energy_mev(
