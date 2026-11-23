@@ -34,7 +34,6 @@ def solve_variational_lepton(
     r_c_m = const.R_COMPTON_MU if lepton == "muon" else const.R_COMPTON_E
     r_c_fm = r_c_m * 1e15
 
-    # Initial guess in log-space to guarantee positivity across orders of magnitude
     x0 = np.array([np.log(r_c_fm), np.log(r_c_fm * np.sqrt(const.ALPHA_FS))])
 
     def objective(x):
@@ -49,7 +48,6 @@ def solve_variational_lepton(
     R0_opt = float(np.exp(res.x[0]))
     sig_opt = float(np.exp(res.x[1]))
 
-    # Build grid centered around the equilibrium radius R0_opt
     grid_scale_m = max(R0_opt * 1e-15, 0.25 * r_c_m)
     R, Z, _ = build_lepton_grid(grid_scale_m)
 
