@@ -22,7 +22,8 @@ def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, b
     # 3. Supercoiling ribbon contraction with central core saturation (gamma_nl = Born-Infeld ceiling)
     core_density = (H ** 2) * ((r_e / R0) ** 2)
     saturated_density = core_density / np.sqrt(1.0 + gamma_nl * core_density)
-    E_supercoil = alpha_nl * (hbar_c / r_c) * (R0 / r_e) * buckling_factor / (1.0 + gamma_nl * saturated_density)
+    E_supercoil = const.ALPHA_FS * alpha_nl * (hbar_c / r_c) * (R0 / r_e) * buckling_factor / (1.0 + gamma_nl * saturated_density)
+
 
     # 4. Short-range Faddeev-Skyrme ribbon layer stiffness (prevents collapse at R0 ~ r_e)
     E_core = beta_nl * hbar_c * H * (r_e / (R0 ** 2))
