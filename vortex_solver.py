@@ -48,12 +48,13 @@ def solve_variational_lepton(
     R0_opt = float(np.exp(res.x[0]))
     sig_opt = float(np.exp(res.x[1]))
 
-    grid_scale_m = max(R0_opt * 1e-15, 0.25 * r_c_m)
-    R, Z, _ = build_lepton_grid(grid_scale_m)
+    effective_scale_fm = max(R0_opt + 2.5 * sig_opt, 0.25 * r_c_fm)
+    R, Z, _ = build_lepton_grid(effective_scale_fm * 1e-15, span_factors=1.5)
 
     rho_torus = np.sqrt((R - R0_opt) ** 2 + Z ** 2)
     psi = np.exp(-0.5 * (rho_torus / sig_opt) ** 2) * (R / (R + 0.05 * R0_opt))
 
     obs = phys.compute_observables(R0_opt, sig_opt, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl)
     obs["R_compton_fm"] = float(r_c_fm)
+    obs["plot_scale_fm"] = float(1.5 * effective_scale_fm / 4.0)
     return R, Z, psi, obs
