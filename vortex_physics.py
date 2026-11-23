@@ -121,7 +121,9 @@ def compute_observables(
 
     # Effective magnetic g-factor correction from torus aspect ratio (sigma / R0)
     aspect = sigma_fm / max(R0_fm, 1e-6)
-    r_e = const.R_CLASSICAL_E * 1e15
+    # OLD_G_RE: r_e = const.R_CLASSICAL_E * 1e15
+    l_vac = (((const.HBAR * const.C) / (const.EPS0 * (const.E_SCHWINGER ** 2))) ** 0.25) * 1e15
+    r_e = const.ALPHA_FS * l_vac
     n_eff = medium_refractive_index(max(R0_fm, 1e-3), hopf_charge, alpha_nl, gamma_nl, r_e)
     # OLD_G_EFF: g_eff = 2.0 * (1.0 + (const.ALPHA_FS / (2.0 * np.pi)) * (1.0 + 0.25 * (aspect ** 2)))
     g_eff = 2.0 * (1.0 + (const.ALPHA_FS / (2.0 * np.pi)) * n_eff * (1.0 + 0.25 * (aspect ** 2)))
