@@ -19,6 +19,9 @@ def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, b
 
     # Topological knot complexity index (Hopf-like invariant H = m_tor * n_pol)
     H_knot = m_tor * n_pol
+    r_c_e = const.R_COMPTON_E * 1e15
+    u_rel = (H_knot ** 2) * ((r_c_e / R0) ** 2) * ((r_c_e / sig) ** 2)
+    n_eff = 1.0 + (alpha_nl * u_rel) / (1.0 + gamma_nl * u_rel)
 
     # 1. Elastic line tension + helical circulation kinetic energy (~ 1/sig^2 compressed along 2*pi*R0)
     E_elastic = (hbar_c_mev_fm * R0 / (sig ** 2)) * (0.5 * (m_tor ** 2) + 0.5 * (n_pol ** 2) * (sig / R0) ** 2)
@@ -36,6 +39,11 @@ def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, b
 
     return E_elastic + E_skyrme + E_em + E_pressure
 
+    E_elastic_eff = E_elastic / (n_eff ** 0.5)
+    E_skyrme_eff = E_skyrme * (n_eff ** 0.5)
+    E_em_eff = E_em / n_eff
+    E_pressure_eff = E_pressure * (n_eff ** 1.5)
+    return E_elastic_eff + E_skyrme_eff + E_em_eff + E_pressure_eff
 
 def compute_observables(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05):
     """
