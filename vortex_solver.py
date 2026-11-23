@@ -42,7 +42,7 @@ def solve_variational_lepton(
         sig_try = np.exp(x[1])
         return phys.soliton_total_energy_mev(
             R0_try, sig_try, m_tor=m_tor, n_pol=n_pol,
-            alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl
+            alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl, eta_visc=eta_visc
         )
 
     res = minimize(objective, x0, method="Nelder-Mead", options={"maxiter": 1500, "xatol": 1e-6, "fatol": 1e-6})
