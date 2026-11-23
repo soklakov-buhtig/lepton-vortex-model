@@ -15,7 +15,7 @@ st.caption(
 with st.sidebar:
     anchor_mode = st.radio(
         "Calibration Anchor Mode",
-        ["None (Masses only)", "Electron R0 = 386.16 fm", "Muon R0 = 1.868 fm"],
+        ["None", "Electron", "Muon"],
         key="anchor_mode",
     )
 
