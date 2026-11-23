@@ -13,8 +13,11 @@ st.caption(
 )
 
 with st.sidebar:
-    st.header("1. Global Medium Property")
-    alpha_nl = st.slider("Nonlinear stiffness coupling (alpha_nl)", 0.0, 2.0, 0.1, step=0.05)
+    st.header("1. Global Medium Properties")
+    alpha_nl = st.slider("EM saturation coupling (alpha_nl)", 0.0, 2.0, 0.15, step=0.05)
+    beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", 0.0, 5.0, 1.0, step=0.1)
+    gamma_nl = st.slider("Background medium pressure (gamma_nl)", 0.0, 1.0, 0.05, step=0.01)
+
 
     st.divider()
     st.header("2. Electron Topology")
@@ -111,8 +114,9 @@ def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe"):
 
 
 # --- Top Row: Electron ---
-R_e, Z_e, psi_e, meta_e = solver.get_lepton_ansatz(
-    "electron", m_tor=m_tor_e, n_pol=n_pol_e, alpha_nl=alpha_nl
+R_e, Z_e, psi_e, meta_e = solver.solve_variational_lepton(
+    "electron", m_tor=m_tor_e, n_pol=n_pol_e,
+    alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl
 )
 st.subheader(f"1. Electron Vortex Core — Mode ({m_tor_e}, {n_pol_e}) [R_Compton = {meta_e['R_compton_fm']:.2f} fm]")
 col_e1, col_e2, col_e3 = st.columns([1.15, 1.15, 0.8])
@@ -127,9 +131,11 @@ with col_e2:
     else:
         st.info("3D rendering paused to save resources. Toggle switch above to inspect the helical-toroidal core.")
 with col_e3:
-    st.markdown("**Electron Anchors (`constants.py`):**")
-    st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_e}, {n_pol_e})`")
-    st.write(f"- Rest mass: `{const.M_ELECTRON_MEV:.6f} MeV`")
+    st.markdown("**Electron Variational Output:**")
+    st.write(f"- Topology $(m_{{\\mathrm{{tor}}}}, n_{{\\mathrm{{pol}}}})$: `({m_tor_e}, {n_pol_e})` | $Q_H = {meta_e['hopf_charge']}$")
+    st.write(f"- Computed mass: `{meta_e['mass_mev']:.6f} MeV` (target `{const.M_ELECTRON_MEV:.6f}`)")
+    st.write(f"- Effective $g$-factor: `{meta_e['g_factor']:.6f}`")
+
     st.write(f"- Major radius $R_0$: `{meta_e['R0_fm']:.2f} fm`")
     st.write(f"- Tube width $\\sigma$: `{meta_e['sigma_fm']:.2f} fm`")
     st.write(f"- Classical radius $r_e$: `{const.R_CLASSICAL_E * 1e15:.3f} fm`")
@@ -137,9 +143,11 @@ with col_e3:
 st.divider()
 
 # --- Bottom Row: Muon ---
-R_mu, Z_mu, psi_mu, meta_mu = solver.get_lepton_ansatz(
-    "muon", m_tor=m_tor_mu, n_pol=n_pol_mu, alpha_nl=alpha_nl
+R_mu, Z_mu, psi_mu, meta_mu = solver.solve_variational_lepton(
+    "muon", m_tor=m_tor_mu, n_pol=n_pol_mu,
+    alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl
 )
+
 st.subheader(f"2. Muon Vortex Core — Mode ({m_tor_mu}, {n_pol_mu}) [R_Compton = {meta_mu['R_compton_fm']:.3f} fm]")
 col_mu1, col_mu2, col_mu3 = st.columns([1.15, 1.15, 0.8])
 with col_mu1:
