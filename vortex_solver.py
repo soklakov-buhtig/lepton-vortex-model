@@ -26,6 +26,7 @@ def solve_variational_lepton(
     alpha_nl=0.15,
     beta_nl=1.0,
     gamma_nl=0.05,
+    eta_visc=1.0,
 ):
     """
     Finds equilibrium toroidal geometry (R0*, sigma*) by minimizing total soliton energy
