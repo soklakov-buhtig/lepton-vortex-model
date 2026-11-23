@@ -21,11 +21,12 @@ with st.sidebar:
 
     if "pending_calib" in st.session_state:
         a, b, g, eta, d_pack = st.session_state.pop("pending_calib")
-        st.session_state["alpha_nl"] = round(a, 3)
-        st.session_state["beta_nl"] = round(b, 3)
-        st.session_state["gamma_nl"] = round(g, 4)
-        st.session_state["eta_visc"] = round(eta, 2)
-        st.session_state["delta_pack"] = round(d_pack, 4)
+        st.session_state["alpha_nl"] = float(a)
+        st.session_state["beta_nl"] = float(b)
+        st.session_state["gamma_nl"] = float(g)
+        st.session_state["eta_visc"] = float(eta)
+        st.session_state["delta_pack"] = float(d_pack)
+
 
     a_min, a_max = const.MEDIUM_BOUNDS["alpha_nl"]
     b_min, b_max = const.MEDIUM_BOUNDS["beta_nl"]
