@@ -47,7 +47,7 @@ def E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e):
 
     return E_mom + E_grad_p
 
-def E_3_torsion_buckling(R0, sig, H, alpha_nl, gamma_nl, beta_nl, eta_visc, hbar_c, r_e):
+def E_3_torsion_buckling(R0, sig, H, alpha_nl, gamma_nl, beta_nl, eta_visc, hbar_c, r_e, delta_pack):
     # Row 3: Ribbon torsion stiffness (beta_nl) + two-channel shear buckling cascade (eta_visc)
     n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
     r_e_eff = r_e / np.sqrt(n_eff)
@@ -56,7 +56,9 @@ def E_3_torsion_buckling(R0, sig, H, alpha_nl, gamma_nl, beta_nl, eta_visc, hbar
     shear_rad = (eta_visc / n_eff) * (H ** 2) * (r_e_eff / R0)
     shear_tan = (eta_visc / n_eff) * H * (r_e_eff / sig)
     chi = shear_rad + shear_tan
-    buckling_factor = 1.0 + (chi ** 3) / (1.0 + 1e-4 * (chi ** 3))
+    # OLD_BUCKLING_CAP: buckling_factor = 1.0 + (chi ** 3) / (1.0 + 1e-4 * (chi ** 3))
+    buckling_factor = 1.0 + (chi ** 3) / (1.0 + delta_pack * (chi ** 3))
+
 
 #    n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
 #    hbar_c_eff = hbar_c / n_eff
@@ -109,7 +111,7 @@ def soliton_total_energy_mev(
     E1 = E_1_waveguide(R0, sig, H, alpha_nl, gamma_nl, hbar_c, r_e, r_c)
     # OLD_E2: E2 = E_2_gradient_kin(R0, sig, m_tor, n_pol, hbar_c)
     E2 = E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e)
-    E3 = E_3_torsion_buckling(R0, sig, H, alpha_nl, gamma_nl, beta_nl, eta_visc, hbar_c, r_e)
+    E3 = E_3_torsion_buckling(R0, sig, H, alpha_nl, gamma_nl, beta_nl, eta_visc, hbar_c, r_e, delta_pack)
 #    E3 = E_3_torsion_buckling(R0, sig, H, beta_nl, eta_visc, hbar_c, r_e)
     E4 = E_4_compaction(R0, sig, H, gamma_nl, delta_pack, hbar_c, r_e)
 
