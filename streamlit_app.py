@@ -114,7 +114,7 @@ def make_3d_helical_torus(R0, sigma, m_tor, n_pol, line_color="#00f2fe"):
 # --- Top Row: Electron ---
 R_e, Z_e, psi_e, meta_e = solver.solve_variational_lepton(
     "electron", m_tor=m_tor_e, n_pol=n_pol_e,
-    alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl
+    alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl, eta_visc=eta_visc
 )
 st.subheader(f"1. Electron Vortex Core — Mode ({m_tor_e}, {n_pol_e}) [R_Compton = {meta_e['R_compton_fm']:.2f} fm]")
 col_e1, col_e2, col_e3 = st.columns([1.15, 1.15, 0.8])
@@ -138,7 +138,7 @@ st.divider()
 # --- Bottom Row: Muon ---
 R_mu, Z_mu, psi_mu, meta_mu = solver.solve_variational_lepton(
     "muon", m_tor=m_tor_mu, n_pol=n_pol_mu,
-    alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl
+    alpha_nl=alpha_nl, beta_nl=beta_nl, gamma_nl=gamma_nl, eta_visc=eta_visc
 )
 
 st.subheader(f"2. Muon Vortex Core — Mode ({m_tor_mu}, {n_pol_mu}) [R_Compton = {meta_mu['R_compton_fm']:.3f} fm]")
