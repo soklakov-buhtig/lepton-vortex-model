@@ -27,6 +27,7 @@ def solve_variational_lepton(
     beta_nl=1.0,
     gamma_nl=0.05,
     eta_visc=1.0,
+    delta_pack=1.0,
 ):
     """
     Finds equilibrium toroidal geometry (R0*, sigma*) by minimizing total soliton energy
@@ -35,7 +36,7 @@ def solve_variational_lepton(
     r_c_m = const.R_COMPTON_MU if lepton == "muon" else const.R_COMPTON_E
     r_c_fm = r_c_m * 1e15
 
-    r0_init, sig_init, _ = _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+    r0_init, sig_init, _ = _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack)
     x0 = np.array([np.log(r0_init), np.log(sig_init)])
 
 
@@ -57,27 +58,27 @@ def solve_variational_lepton(
     rho_torus = np.sqrt((R - R0_opt) ** 2 + Z ** 2)
     psi = np.exp(-0.5 * (rho_torus / sig_opt) ** 2) * (R / (R + 0.05 * R0_opt))
 
-    obs = phys.compute_observables(R0_opt, sig_opt, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+    obs = phys.compute_observables(R0_opt, sig_opt, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack)
     obs["R_compton_fm"] = float(r_c_fm)
     obs["plot_scale_fm"] = float(1.5 * effective_scale_fm / 4.0)
     return R, Z, psi, obs
 
-def _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc):
+def _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=1.0):
     grid_1d = np.geomspace(0.05, 15000.0, 70)
     R_g, S_g = np.meshgrid(grid_1d, grid_1d, indexing="ij")
-    E_g = phys.soliton_total_energy_mev(R_g, S_g, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+    E_g = phys.soliton_total_energy_mev(R_g, S_g, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack)
     idx = np.unravel_index(np.argmin(E_g), E_g.shape)
     return float(R_g[idx]), float(S_g[idx]), float(E_g[idx])
 
 
-def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc):
-    r0_init, sig_init, _ = _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=1.0):
+    r0_init, sig_init, _ = _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=delta_pack)
     x0 = np.array([np.log(r0_init), np.log(sig_init)])
 
     def obj(x):
         r_log, s_log = x
         return phys.soliton_total_energy_mev(
-            np.exp(r_log), np.exp(s_log), m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc
+            np.exp(r_log), np.exp(s_log), m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=delta_pack
         )
 
     res = minimize(obj, x0, method="Nelder-Mead", options={"maxiter": 250, "xatol": 1e-4, "fatol": 1e-4})
@@ -95,8 +96,8 @@ def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
 
     def loss(params):
         a, b, g, eta = params
-        me = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta)
-        mmu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta)
+        me = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta, delta_pack)
+        mmu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta, delta_pack)
         err_e = np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2
         err_mu = np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
         return err_e + err_mu
