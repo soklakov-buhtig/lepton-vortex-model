@@ -36,11 +36,14 @@ with st.sidebar:
     b_min, b_max = const.MEDIUM_BOUNDS["beta_nl"]
     g_min, g_max = const.MEDIUM_BOUNDS["gamma_nl"]
     e_min, e_max = const.MEDIUM_BOUNDS["eta_visc"]
+    d_min, d_max = const.MEDIUM_BOUNDS["delta_pack"]
 
     alpha_nl = st.slider("EM saturation coupling (alpha_nl)", float(a_min), float(a_max), key="alpha_nl", step=0.1)
     beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", float(b_min), float(b_max), key="beta_nl", step=1.0)
     gamma_nl = st.slider("Background medium pressure (gamma_nl)", float(g_min), float(g_max), key="gamma_nl", step=0.01)
     eta_visc = st.slider("Medium shear viscosity (eta_visc)", float(e_min), float(e_max), key="eta_visc", step=0.1)
+    delta_pack = st.slider("Turn-to-turn compaction limit (delta_pack)", float(d_min), float(d_max), key="delta_pack", step=0.01)
+
 
 
 
