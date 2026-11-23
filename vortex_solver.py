@@ -60,20 +60,30 @@ def solve_variational_lepton(
     obs["plot_scale_fm"] = float(1.5 * effective_scale_fm / 4.0)
     return R, Z, psi, obs
 
+def _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc):
+    grid_1d = np.geomspace(0.05, 15000.0, 70)
+    R_g, S_g = np.meshgrid(grid_1d, grid_1d, indexing="ij")
+    E_g = phys.soliton_total_energy_mev(R_g, S_g, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+    idx = np.unravel_index(np.argmin(E_g), E_g.shape)
+    return float(R_g[idx]), float(S_g[idx]), float(E_g[idx])
+
+
 def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc):
-    r_guess = const.R_COMPTON_E * 1e15 / max(m_tor * n_pol, 1)
-    x0 = np.array([np.log(r_guess), np.log(0.5 * r_guess)])
-    res = minimize(
-        lambda x: phys.soliton_total_energy_mev(
-            np.exp(x[0]), np.exp(x[1]), m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc
-        ),
-        x0, method="Nelder-Mead", options={"maxiter": 350, "xatol": 1e-4, "fatol": 1e-4},
-    )
+    r0_init, sig_init, _ = _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc)
+    x0 = np.array([np.log(r0_init), np.log(sig_init)])
+
+    def obj(x):
+        r_log, s_log = x
+        return phys.soliton_total_energy_mev(
+            np.exp(r_log), np.exp(s_log), m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc
+        )
+
+    res = minimize(obj, x0, method="Nelder-Mead", options={"maxiter": 250, "xatol": 1e-4, "fatol": 1e-4})
     return float(res.fun)
 
 
 def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
-    bounds = [(0.05, 50.0), (0.01, 10.0), (0.001, 2.0), (0.1, 20.0)]
+    bounds = [(0.05, 500.0), (0.01, 100.0), (0.001, 50.0), (0.1, 100.0)]
 
     def loss(params):
         a, b, g, eta = params
