@@ -4,27 +4,29 @@ import constants as const
 
 def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05):
     hbar_c = (const.HBAR * const.C / const.MEV_TO_J) * 1e15
-    R0 = max(R0_fm, 1e-4)
-    sig = max(sigma_fm, 1e-4)
+    r_e = const.R_CLASSICAL_E * 1e15   # ~2.818 fm
+    r_c = const.R_COMPTON_E * 1e15     # ~386.16 fm
 
+    R0 = max(R0_fm, 1e-3)
+    sig = max(sigma_fm, 1e-3)
     H = m_tor * n_pol
-    r_c_e = const.R_COMPTON_E * 1e15
 
-    # 1. Angular momentum / circulation kinetic energy (~ 1/R0, grows when core shrinks)
+    # 1. Circulation kinetic energy (scales as 1/R0 by angular momentum conservation)
     E_kin = 0.5 * hbar_c * (m_tor + 0.5 * n_pol) / R0
 
-    # 2. Tube cross-section confinement (balances sigma relative to R0)
-    E_tube = 0.5 * hbar_c * R0 / (sig ** 2)
+    # 2. Tube cross-section equilibrium (balances 1/sig^2 confinement against sig/R0 surface tension)
+    E_tube = 0.5 * hbar_c * (R0 / (sig ** 2) + (H ** 0.5) * sig / (R0 ** 2))
 
-    # 3. Supercoiling ribbon contraction (pulls R0 inward as H^3 grows)
-    u_rel = (H ** 3) * ((r_c_e / R0) ** 2)
-    n_eff = 1.0 + (alpha_nl * u_rel) / (1.0 + gamma_nl * u_rel)
-    E_supercoil = (hbar_c / r_c_e) * (R0 / r_c_e) * (H ** 2) * n_eff
+    # 3. Supercoiling ribbon contraction with central core saturation (gamma_nl = Born-Infeld ceiling)
+    core_density = (H ** 2) * ((r_e / R0) ** 2)
+    saturated_density = core_density / np.sqrt(1.0 + gamma_nl * core_density)
+    E_supercoil = alpha_nl * (hbar_c / r_c) * (R0 / r_e) * (H ** 2) / (1.0 + 0.2 * saturated_density)
 
-    # 4. Short-range ribbon layer repulsion (prevents collapse to R0 -> 0)
-    E_core_repulsion = beta_nl * hbar_c * (r_c_e / (R0 ** 2)) * (1.0 + 0.1 * H)
+    # 4. Short-range Faddeev-Skyrme ribbon layer stiffness (prevents collapse at R0 ~ r_e)
+    E_core = beta_nl * hbar_c * H * (r_e / (R0 ** 2))
 
-    return E_kin + E_tube + E_supercoil + E_core_repulsion
+    return E_kin + E_tube + E_supercoil + E_core
+
 
 
 def compute_observables(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, beta_nl=1.0, gamma_nl=0.05):
