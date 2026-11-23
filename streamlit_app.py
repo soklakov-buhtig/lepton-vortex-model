@@ -68,13 +68,13 @@ with st.sidebar:
 
     st.divider()
     st.header("2. Electron Topology")
-    m_tor_e = st.number_input("Electron toroidal winding (m_tor)", min_value=1, max_value=20, value=2, key="m_tor_e")
-    n_pol_e = st.number_input("Electron poloidal winding (n_pol)", min_value=1, max_value=20, value=3, key="n_pol_e")
+    m_tor_e = st.number_input("Electron toroidal winding (m_tor)", min_value=1, max_value=200, value=2, key="m_tor_e")
+    n_pol_e = st.number_input("Electron poloidal winding (n_pol)", min_value=1, max_value=200, value=3, key="n_pol_e")
 
     st.divider()
     st.header("3. Muon Topology")
-    m_tor_mu = st.number_input("Muon toroidal winding (m_tor)", min_value=1, max_value=20, value=5, key="m_tor_mu")
-    n_pol_mu = st.number_input("Muon poloidal winding (n_pol)", min_value=1, max_value=20, value=7, key="n_pol_mu")
+    m_tor_mu = st.number_input("Muon toroidal winding (m_tor)", min_value=1, max_value=200, value=5, key="m_tor_mu")
+    n_pol_mu = st.number_input("Muon poloidal winding (n_pol)", min_value=1, max_value=200, value=7, key="n_pol_mu")
 
     st.divider()
     st.subheader("Target Experimental Benchmarks")
