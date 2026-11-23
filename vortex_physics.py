@@ -16,8 +16,14 @@ def E_2_gradient_kin(R0, sig, m_tor, n_pol, hbar_c):
 
 
 def E_3_torsion_buckling(R0, sig, H, beta_nl, eta_visc, hbar_c, r_e):
-    # Row 3: Ribbon torsion & cascade shear bifurcation (enabled in Stage C)
-    return 0.0
+    # Row 3: Ribbon torsion stiffness (beta_nl) + two-channel shear buckling cascade (eta_visc)
+    E_torsion = beta_nl * hbar_c * (H ** 2) * (r_e / (R0 ** 2) + r_e / (sig ** 2))
+    shear_rad = eta_visc * (H ** 2) * (r_e / R0)
+    shear_tan = eta_visc * H * (r_e / sig)
+    chi = shear_rad + shear_tan
+    buckling_factor = 1.0 + (chi ** 3) / (1.0 + 1e-4 * (chi ** 3))
+    return E_torsion / buckling_factor
+
 
 
 def E_4_compaction(R0, sig, H, gamma_nl, delta_pack, hbar_c, r_e):
