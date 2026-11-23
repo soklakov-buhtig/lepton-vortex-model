@@ -95,13 +95,13 @@ def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
     ]
 
 
-    def loss(params):
-        a, b, g, eta = params
-        me = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta, delta_pack)
-        mmu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta, delta_pack)
-        err_e = np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2
-        err_mu = np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
-        return err_e + err_mu
+    log_bounds = [(np.log10(lo), np.log10(hi)) for lo, hi in bounds]
 
-    res = differential_evolution(loss, bounds, maxiter=35, popsize=8, seed=42, polish=True)
-    return [float(v) for v in res.x], float(res.fun)
+    def loss(log_params):
+        a, b, g, eta, d_pack = 10.0 ** np.array(log_params)
+        me = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta, d_pack)
+        mmu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta, d_pack)
+        return np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2 + np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
+
+    res = differential_evolution(loss, log_bounds, maxiter=40, popsize=8, seed=42, polish=True)
+    return [float(10.0 ** v) for v in res.x], float(res.fun)
