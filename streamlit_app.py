@@ -241,7 +241,9 @@ if "calib_loss" in st.session_state:
             f"{meta_mu['n_eff']:.6f}\n"
             f"{meta_mu['g_factor']:.6f}\n"
             f"{ratio_calc:.2f}\n"
-            f"{r_ratio:.2f}"
+            f"{r_ratio:.2f}\n"
+            f"{meta_e['coverage']:.6g}\n"
+            f"{meta_mu['coverage']:.6g}"
         ).replace(".", ",")
         st.code(summary_text, language="text")
 
