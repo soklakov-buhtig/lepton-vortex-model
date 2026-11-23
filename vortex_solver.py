@@ -85,7 +85,13 @@ def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc):
 
 
 def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
-    bounds = [(0.05, 500.0), (0.01, 100000.0), (0.001, 50.0), (0.1, 100.0)]
+    bounds = [
+        const.MEDIUM_BOUNDS["alpha_nl"],
+        const.MEDIUM_BOUNDS["beta_nl"],
+        const.MEDIUM_BOUNDS["gamma_nl"],
+        const.MEDIUM_BOUNDS["eta_visc"],
+    ]
+
 
     def loss(params):
         a, b, g, eta = params
