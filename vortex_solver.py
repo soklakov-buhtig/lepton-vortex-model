@@ -64,7 +64,8 @@ def solve_variational_lepton(
     return R, Z, psi, obs
 
 def _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=1.0):
-    grid_1d = np.geomspace(0.05, 15000.0, 70)
+    # OLD_GRID: grid_1d = np.geomspace(0.05, 15000.0, 70)
+    grid_1d = np.geomspace(0.01, 500000.0, 80)
     R_g, S_g = np.meshgrid(grid_1d, grid_1d, indexing="ij")
     E_g = phys.soliton_total_energy_mev(R_g, S_g, m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack)
     idx = np.unravel_index(np.argmin(E_g), E_g.shape)
