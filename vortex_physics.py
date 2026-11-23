@@ -37,7 +37,6 @@ def soliton_total_energy_mev(R0_fm, sigma_fm, m_tor=1, n_pol=1, alpha_nl=0.15, b
     torus_volume_fm3 = 2.0 * (np.pi ** 2) * R0 * (sig ** 2)
     E_pressure = gamma_nl * (hbar_c_mev_fm / (const.R_COMPTON_E * 1e15) ** 4) * torus_volume_fm3
 
-    return E_elastic + E_skyrme + E_em + E_pressure
 
     E_elastic_eff = E_elastic / (n_eff ** 0.5)
     E_skyrme_eff = E_skyrme * (n_eff ** 0.5)
