@@ -72,7 +72,7 @@ def _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delt
     return float(R_g[idx]), float(S_g[idx]), float(E_g[idx])
 
 
-def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=1.0):
+def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=1.0, return_r0=False):
     r0_init, sig_init, _ = _screen_2d_minimum(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=delta_pack)
     x0 = np.array([np.log(r0_init), np.log(sig_init)])
 
@@ -82,7 +82,10 @@ def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_p
             np.exp(r_log), np.exp(s_log), m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_pack=delta_pack
         )
     res = minimize(obj, x0, method="Nelder-Mead", options={"maxiter": 250, "xatol": 1e-4, "fatol": 1e-4})
+    if return_r0:
+        return float(res.fun), float(np.exp(res.x[0]))
     return float(res.fun)
+
 
 
 def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu, anchor_mode="None"):
@@ -97,9 +100,19 @@ def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu, anchor_mode
 
     def loss(log_params):
         a, b, g, eta, d_pack = 10.0 ** np.array(log_params)
-        me = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta, d_pack)
-        mmu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta, d_pack)
-        return np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2 + np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
+        me, r0_e = _fast_mass_eval(m_tor_e, n_pol_e, a, b, g, eta, d_pack, return_r0=True)
+        mmu, r0_mu = _fast_mass_eval(m_tor_mu, n_pol_mu, a, b, g, eta, d_pack, return_r0=True)
+        err = (
+            np.log(max(me, 1e-6) / const.M_ELECTRON_MEV) ** 2
+            + np.log(max(mmu, 1e-6) / const.M_MUON_MEV) ** 2
+        )
+        if anchor_mode == "Electron":
+            target_re = const.R_COMPTON_E * 1e15
+            err += np.log(max(r0_e, 1e-6) / target_re) ** 2
+        elif anchor_mode == "Muon":
+            target_rmu = const.R_COMPTON_MU * 1e15
+            err += np.log(max(r0_mu, 1e-6) / target_rmu) ** 2
+        return err
 
 
     res = differential_evolution(loss, log_bounds, maxiter=40, popsize=8, seed=42, polish=True)
