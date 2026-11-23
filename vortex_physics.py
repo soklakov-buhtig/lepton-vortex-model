@@ -43,7 +43,9 @@ def E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e):
     n_kin_eff = (m_tor + 0.5 * n_pol) / np.sqrt(1.0 + eta_pack)
     E_mom = (0.5 / np.pi) * hbar_c_eff * n_kin_eff / R0
 
-    E_grad_p = (0.5 / np.pi) * hbar_c_eff * R0 / (sig ** 2)
+    # OLD_GRAD_P: E_grad_p = (0.5 / np.pi) * hbar_c_eff * R0 / (sig ** 2)
+    E_grad_p = (0.5 / np.pi) * hbar_c_eff / sig
+
 
     return E_mom + E_grad_p
 
