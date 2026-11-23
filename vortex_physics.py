@@ -64,7 +64,8 @@ def soliton_total_energy_mev(
     H = m_tor * n_pol
 
     E1 = E_1_waveguide(R0, sig, H, alpha_nl, hbar_c, r_e, r_c)
-    E2 = E_2_gradient_kin(R0, sig, m_tor, n_pol, hbar_c)
+    # OLD_E2: E2 = E_2_gradient_kin(R0, sig, m_tor, n_pol, hbar_c)
+    E2 = E_2_gradient_kin(R0, sig, m_tor, n_pol, H, alpha_nl, gamma_nl, hbar_c, r_e)
     E3 = E_3_torsion_buckling(R0, sig, H, beta_nl, eta_visc, hbar_c, r_e)
     E4 = E_4_compaction(R0, sig, H, gamma_nl, delta_pack, hbar_c, r_e)
 
