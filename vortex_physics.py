@@ -10,8 +10,16 @@ def E_1_waveguide(    R0, sig, H, alpha_nl, gamma_nl, hbar_c, r_e, r_c):
     # Row 1: Optical-magnetic waveguide confinement (refraction on R0 + magnetic pinch on sigma)
     n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
     dn2 = (n_eff ** 2) - 1.0
-    E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c) * ((R0 / r_e) ** 3)
-    E_pinch = 0.5 * dn2 * hbar_c * ((sig / r_e) ** 2)
+    n_eff = medium_refractive_index(R0, H, alpha_nl, gamma_nl, r_e)
+    sqrt_n = np.sqrt(n_eff)
+    r_c_eff = r_c / sqrt_n
+    r_e_eff = r_e / sqrt_n
+    dn2 = (n_eff ** 2) - 1.0
+    E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c_eff) * ((R0 / r_e_eff) ** 3)
+    E_pinch = 0.5 * dn2 * hbar_c * ((sig / r_e_eff) ** 2)
+
+#    E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c) * ((R0 / r_e) ** 3)
+#    E_pinch = 0.5 * dn2 * hbar_c * ((sig / r_e) ** 2)
 
 #    E_refract = const.ALPHA_FS * alpha_nl * (H ** 2) * (hbar_c / r_c) * (R0 / r_e)
 #    E_pinch = alpha_nl * hbar_c * H * (sig ** 2) / (R0 ** 2)
