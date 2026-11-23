@@ -63,18 +63,6 @@ with st.sidebar:
             st.session_state["calib_loss"] = loss_val
             st.rerun()
 
-
-    if "calib_loss" in st.session_state:
-        st.caption(f"Calibrator log-error: `{st.session_state['calib_loss']:.5f}`")
-        st.code(
-            f"alpha_nl   = {alpha_nl:.6g}\n"
-            f"beta_nl    = {beta_nl:.6g}\n"
-            f"gamma_nl   = {gamma_nl:.6g}\n"
-            f"eta_visc   = {eta_visc:.6g}\n"
-            f"delta_pack = {delta_pack:.6g}",
-            language="text",
-        )
-
         
 
     st.divider()
@@ -215,3 +203,30 @@ with col_mu3:
     st.metric("Computed Muon Mass", f"{meta_mu['mass_mev']:.3f} MeV", delta=f"Target: {const.M_MUON_MEV:.2f}")
     st.metric("Mass Ratio (m_mu / m_e)", f"{ratio_calc:.2f}", delta=f"Target: {const.MUON_ELECTRON_MASS_RATIO:.2f}")
     st.write(f"**R0 / σ:** `{meta_mu['R0_fm']:.2f} / {meta_mu['sigma_fm']:.2f} fm` | **$Q_H$:** `{meta_mu['hopf_charge']}`")
+
+if "calib_loss" in st.session_state:
+    r_ratio = meta_e["R0_fm"] / max(meta_mu["R0_fm"], 1e-12)
+    with st.sidebar:
+        st.divider()
+        st.code(
+            f"anchor     = {anchor_mode}\n"
+            f"topo       = ({m_tor_e},{n_pol_e})->({m_tor_mu},{n_pol_mu})\n"
+            f"Q_H        = {meta_e['hopf_charge']}->{meta_mu['hopf_charge']}\n"
+            f"log_error  = {st.session_state['calib_loss']:.5f}\n"
+            f"alpha_nl   = {alpha_nl:.6g}\n"
+            f"beta_nl    = {beta_nl:.6g}\n"
+            f"gamma_nl   = {gamma_nl:.6g}\n"
+            f"eta_visc   = {eta_visc:.6g}\n"
+            f"delta_pack = {delta_pack:.6g}\n"
+            f"m_e_MeV    = {meta_e['mass_mev']:.5f}\n"
+            f"R0_e_fm    = {meta_e['R0_fm']:.2f}\n"
+            f"sig_e_fm   = {meta_e['sigma_fm']:.2f}\n"
+            f"g_e        = {meta_e['g_factor']:.6f}\n"
+            f"m_mu_MeV   = {meta_mu['mass_mev']:.3f}\n"
+            f"R0_mu_fm   = {meta_mu['R0_fm']:.2f}\n"
+            f"sig_mu_fm  = {meta_mu['sigma_fm']:.2f}\n"
+            f"g_mu       = {meta_mu['g_factor']:.6f}\n"
+            f"mass_ratio = {ratio_calc:.2f}\n"
+            f"rad_ratio  = {r_ratio:.2f}",
+            language="text",
+        )
