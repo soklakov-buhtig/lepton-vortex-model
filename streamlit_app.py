@@ -34,11 +34,12 @@ with st.sidebar:
     e_min, e_max = const.MEDIUM_BOUNDS["eta_visc"]
     d_min, d_max = const.MEDIUM_BOUNDS["delta_pack"]
 
-    alpha_nl = st.slider("EM saturation coupling (alpha_nl)", float(a_min), float(a_max), key="alpha_nl", step=0.1)
-    beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", float(b_min), float(b_max), key="beta_nl", step=1.0)
-    gamma_nl = st.slider("Background medium pressure (gamma_nl)", float(g_min), float(g_max), key="gamma_nl", step=0.01)
-    eta_visc = st.slider("Medium shear viscosity (eta_visc)", float(e_min), float(e_max), key="eta_visc", step=0.1)
-    delta_pack = st.slider("Turn-to-turn compaction limit (delta_pack)", float(d_min), float(d_max), key="delta_pack", step=0.01)
+    alpha_nl = st.slider("EM saturation coupling (alpha_nl)", float(a_min), float(a_max), key="alpha_nl", step=1e-6, format="%.4e")
+    beta_nl = st.slider("Faddeev-Skyrme knot stiffness (beta_nl)", float(b_min), float(b_max), key="beta_nl", step=1e-6, format="%.4e")
+    gamma_nl = st.slider("Background medium pressure (gamma_nl)", float(g_min), float(g_max), key="gamma_nl", step=1e-6, format="%.4e")
+    eta_visc = st.slider("Medium shear viscosity (eta_visc)", float(e_min), float(e_max), key="eta_visc", step=1e-6, format="%.4e")
+    delta_pack = st.slider("Turn-to-turn compaction limit (delta_pack)", float(d_min), float(d_max), key="delta_pack", step=1e-6, format="%.4e")
+
 
 
 
@@ -58,6 +59,16 @@ with st.sidebar:
 
     if "calib_loss" in st.session_state:
         st.caption(f"Calibrator log-error: `{st.session_state['calib_loss']:.5f}`")
+        st.code(
+            f"alpha_nl   = {alpha_nl:.6g}\n"
+            f"beta_nl    = {beta_nl:.6g}\n"
+            f"gamma_nl   = {gamma_nl:.6g}\n"
+            f"eta_visc   = {eta_visc:.6g}\n"
+            f"delta_pack = {delta_pack:.6g}",
+            language="text",
+        )
+
+        
 
     st.divider()
     st.header("2. Electron Topology")
