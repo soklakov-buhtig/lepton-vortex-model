@@ -45,12 +45,22 @@ DEFAULT_R_MAX = 10.0
 DEFAULT_Z_MAX = 10.0
 DEFAULT_GRID_N = 128
 
+# OLD_1e-6_to_1e6:
+# MEDIUM_BOUNDS = {
+#     "alpha_nl": (1e-6, 1000000.0),
+#     "beta_nl": (1e-6, 1000000.0),
+#     "gamma_nl": (1e-6, 1000000.0),
+#     "eta_visc": (1e-6, 1000000.0),
+#     "delta_pack": (1e-6, 1000000.0),
+# }
+
 MEDIUM_BOUNDS = {
-    "alpha_nl": (1e-6, 1000000.0),
-    "beta_nl": (1e-6, 1000000.0),
-    "gamma_nl": (1e-6, 1000000.0),
-    "eta_visc": (1e-6, 1000000.0),
-    "delta_pack": (1e-6, 1000000.0),
+    "alpha_nl": (1e-9, 1e9),
+    "beta_nl": (1e-9, 1e9),
+    "gamma_nl": (1e-9, 1e9),
+    "eta_visc": (1e-9, 1e9),
+    "delta_pack": (1e-9, 1e9),
 }
+
 
 
