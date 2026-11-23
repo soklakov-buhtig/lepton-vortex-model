@@ -13,7 +13,12 @@ st.caption(
 )
 
 with st.sidebar:
-
+    anchor_mode = st.selectbox(
+        "Calibration Anchor Mode",
+        ["None (Masses only)", "Electron R0 = 386.16 fm", "Muon R0 = 1.868 fm"],
+        key="anchor_mode",
+    )
+    
     st.header("1. Global Medium Properties")
     for k, default in [("alpha_nl", 0.25), ("beta_nl", 1.0), ("gamma_nl", 0.05), ("eta_visc", 1.2), ("delta_pack", 1.0)]:        
         if k not in st.session_state:
