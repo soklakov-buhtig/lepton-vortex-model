@@ -85,7 +85,7 @@ def _fast_mass_eval(m_tor, n_pol, alpha_nl, beta_nl, gamma_nl, eta_visc, delta_p
     return float(res.fun)
 
 
-def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu):
+def calibrate_medium_constants(m_tor_e, n_pol_e, m_tor_mu, n_pol_mu, anchor_mode="None"):
     bounds = [
         const.MEDIUM_BOUNDS["alpha_nl"],
         const.MEDIUM_BOUNDS["beta_nl"],
