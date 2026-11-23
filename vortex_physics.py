@@ -15,7 +15,8 @@ def E_1_waveguide(    R0, sig, H, alpha_nl, gamma_nl, hbar_c, r_e, r_c):
     r_c_eff = r_c / sqrt_n
     r_e_eff = r_e / sqrt_n
     dn2 = (n_eff ** 2) - 1.0
-    E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c_eff) * ((R0 / r_e_eff) ** 3)
+    # OLD_E_REFRACT: E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c_eff) * ((R0 / r_e_eff) ** 3)
+    E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c_eff) * ((R0 / r_c_eff) ** 3)
     E_pinch = 0.5 * dn2 * hbar_c * ((sig / r_e_eff) ** 2)
 
 #    E_refract = 0.5 * const.ALPHA_FS * dn2 * (hbar_c / r_c) * ((R0 / r_e) ** 3)
